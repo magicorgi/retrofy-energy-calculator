@@ -31,92 +31,125 @@ import {
 import { ProductCase, Product } from '@/types/product';
 import Link from 'next/link';
 
-// 模拟案例数据
+// 丹佛斯产品应用案例数据
 const mockCases: ProductCase[] = [
   {
     id: '1',
     product_id: '1',
-    title: '北京某商业综合体节能改造项目',
-    description: '该项目采用格力GMV-H180WL/A冷水机组，替换原有老旧设备，实现了显著的节能效果。项目涵盖商场、写字楼、酒店等多个业态，总建筑面积约50,000㎡。改造后年节约电费超过200万元，投资回报期约4.2年。',
+    title: '北京某商业综合体变频器节能改造项目',
+    description: '该项目采用丹佛斯VLT® Flow Drive FC 111变频器，对商业综合体的风机和水泵系统进行全面改造。通过智能变频控制，实现了显著的节能效果。项目涵盖商场、写字楼、酒店等多个业态，总建筑面积约50,000㎡。改造后年节约电费超过180万元，投资回报期约3.8年。',
     location: '北京市朝阳区',
     project_scale: '建筑面积: 50,000㎡',
-    energy_savings: 35.2,
-    investment_return: 4.2,
-    images: ['/images/case1-1.jpg', '/images/case1-2.jpg'],
+    energy_savings: 38.5,
+    investment_return: 3.8,
+    images: ['/images/danfoss-case1-1.jpg', '/images/danfoss-case1-2.jpg'],
     created_at: '2024-01-10T00:00:00Z'
   },
   {
     id: '2',
     product_id: '2',
-    title: '上海某办公楼中央空调系统升级',
-    description: '办公楼中央空调系统全面升级，采用美的MDV-H140WL/A全直流变频多联机，大幅降低运行成本。项目包括3栋办公楼，总建筑面积35,000㎡，改造后系统运行更加稳定，维护成本显著降低。',
+    title: '上海某办公楼热泵压缩机系统升级',
+    description: '办公楼热泵系统全面升级，采用丹佛斯Performer® HHP涡旋压缩机，大幅提升系统效率和可靠性。项目包括3栋办公楼，总建筑面积35,000㎡，改造后系统运行更加稳定，即使在上海冬季低温环境下也能高效运行。',
     location: '上海市浦东新区',
     project_scale: '建筑面积: 35,000㎡',
-    energy_savings: 28.6,
-    investment_return: 3.8,
-    images: ['/images/case2-1.jpg'],
+    energy_savings: 32.1,
+    investment_return: 3.5,
+    images: ['/images/danfoss-case2-1.jpg'],
     created_at: '2024-01-05T00:00:00Z'
   },
   {
     id: '3',
     product_id: '3',
-    title: '青岛某工业园区高温热泵应用案例',
-    description: '工业园区采用海尔Haier-HP200高温热泵机组，为生产工艺提供85°C高温热水，替代原有燃气锅炉。项目年节约天然气费用约150万元，减少CO₂排放约800吨，环保效益显著。',
+    title: '青岛某工业园区换热器优化案例',
+    description: '工业园区采用丹佛斯H系列微板换热器MPHE，为生产工艺提供高效换热解决方案，替代原有低效换热设备。项目年节约能源费用约120万元，减少CO₂排放约600吨，换热效率提升15%，环保效益显著。',
     location: '青岛市黄岛区',
     project_scale: '工业园区: 100,000㎡',
-    energy_savings: 42.1,
-    investment_return: 3.5,
-    images: ['/images/case3-1.jpg', '/images/case3-2.jpg'],
+    energy_savings: 25.8,
+    investment_return: 3.2,
+    images: ['/images/danfoss-case3-1.jpg', '/images/danfoss-case3-2.jpg'],
     created_at: '2024-01-03T00:00:00Z'
   },
   {
     id: '4',
-    product_id: '1',
-    title: '广州某医院空调系统节能改造',
-    description: '三甲医院中央空调系统节能改造项目，采用格力高效冷水机组，在保证医疗环境舒适度的同时，大幅降低能耗。项目涉及门诊楼、住院楼、医技楼等多个建筑，总建筑面积80,000㎡。',
+    product_id: '4',
+    title: '广州某医院水力平衡系统改造',
+    description: '三甲医院供暖制冷系统水力平衡改造项目，采用丹佛斯AB-QM自力式流量平衡阀，确保各区域温度均匀，在保证医疗环境舒适度的同时，大幅降低能耗。项目涉及门诊楼、住院楼、医技楼等多个建筑，总建筑面积80,000㎡。',
     location: '广州市天河区',
     project_scale: '建筑面积: 80,000㎡',
-    energy_savings: 31.8,
-    investment_return: 4.5,
-    images: ['/images/case4-1.jpg'],
+    energy_savings: 22.3,
+    investment_return: 2.8,
+    images: ['/images/danfoss-case4-1.jpg'],
     created_at: '2024-01-01T00:00:00Z'
   },
   {
     id: '5',
-    product_id: '2',
-    title: '杭州某酒店空调系统升级改造',
-    description: '五星级酒店空调系统全面升级，采用美的全直流变频多联机，提升客房舒适度，降低运营成本。项目包括主楼、裙楼、会议中心等，总建筑面积45,000㎡。',
+    product_id: '5',
+    title: '杭州某酒店智能控制系统升级',
+    description: '五星级酒店采用丹佛斯MBS 3000压力传感器和ECL Comfort 310控制器，实现精确的压力监测和智能控制，提升客房舒适度，降低运营成本。项目包括主楼、裙楼、会议中心等，总建筑面积45,000㎡。',
     location: '杭州市西湖区',
     project_scale: '建筑面积: 45,000㎡',
-    energy_savings: 26.4,
-    investment_return: 4.1,
-    images: ['/images/case5-1.jpg', '/images/case5-2.jpg'],
+    energy_savings: 28.9,
+    investment_return: 3.6,
+    images: ['/images/danfoss-case5-1.jpg', '/images/danfoss-case5-2.jpg'],
     created_at: '2023-12-28T00:00:00Z'
+  },
+  {
+    id: '6',
+    product_id: '1',
+    title: '深圳某数据中心变频器节能项目',
+    description: '大型数据中心采用丹佛斯VLT® Flow Drive FC 111变频器，对冷却系统的风机和水泵进行变频改造。通过精确的转速控制和火灾越控模式，确保数据中心安全运行的同时实现显著节能。项目年节约电费超过300万元。',
+    location: '深圳市南山区',
+    project_scale: '数据中心: 25,000㎡',
+    energy_savings: 45.2,
+    investment_return: 2.9,
+    images: ['/images/danfoss-case6-1.jpg'],
+    created_at: '2023-12-25T00:00:00Z'
   }
 ];
 
-// 模拟产品数据（用于关联显示）
+// 丹佛斯产品数据（用于关联显示）
 const mockProducts: Product[] = [
   {
     id: '1',
-    brand: '格力',
-    model: 'GMV-H180WL/A',
-    company: '珠海格力电器股份有限公司',
-    category: 'chiller'
+    brand: '丹佛斯',
+    model: 'VLT® Flow Drive FC 111',
+    company: '丹佛斯（中国）有限公司',
+    category: 'frequency_converter'
   } as Product,
   {
     id: '2',
-    brand: '美的',
-    model: 'MDV-H140WL/A',
-    company: '美的集团股份有限公司',
-    category: 'chiller'
+    brand: '丹佛斯',
+    model: 'Performer® HHP 涡旋压缩机',
+    company: '丹佛斯（中国）有限公司',
+    category: 'compressor'
   } as Product,
   {
     id: '3',
-    brand: '海尔',
-    model: 'Haier-HP200',
-    company: '青岛海尔空调电子有限公司',
-    category: 'heat_pump'
+    brand: '丹佛斯',
+    model: 'H系列微板换热器 MPHE',
+    company: '丹佛斯（中国）有限公司',
+    category: 'heat_exchanger'
+  } as Product,
+  {
+    id: '4',
+    brand: '丹佛斯',
+    model: 'AB-QM 自力式流量平衡阀',
+    company: '丹佛斯（中国）有限公司',
+    category: 'hydraulic_valve'
+  } as Product,
+  {
+    id: '5',
+    brand: '丹佛斯',
+    model: 'MBS 3000 压力传感器',
+    company: '丹佛斯（中国）有限公司',
+    category: 'sensor'
+  } as Product,
+  {
+    id: '6',
+    brand: '丹佛斯',
+    model: 'ECL Comfort 310 控制器',
+    company: '丹佛斯（中国）有限公司',
+    category: 'control_system'
   } as Product
 ];
 

@@ -32,22 +32,21 @@ interface AdminProviderProps {
 export function AdminProvider({ children }: AdminProviderProps) {
   const { user, isAuthenticated } = useAuth();
   const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // 初始化时设为true
 
   // 检查用户是否有管理员权限
   const checkAdminAccess = async (userId: string) => {
     try {
-      // 在实际应用中，这里会调用API检查用户的管理员权限
-      // 模拟管理员用户检查
-      const mockAdminUsers = ['1', '2']; // 模拟管理员用户ID
+      // 检查用户ID或邮箱是否是管理员
+      const isAdminUser = userId === 'admin_001' || 
+                         (user && user.email === 'admin@danfoss.com.cn') ||
+                         (user && user.role === 'system_admin');
       
-      if (mockAdminUsers.includes(userId)) {
+      if (isAdminUser && user) {
         const mockAdminUser: AdminUser = {
-          ...user!,
-          admin_role: userId === '1' ? 'super_admin' : 'admin',
-          permissions: userId === '1' 
-            ? ROLE_PERMISSIONS.super_admin 
-            : ROLE_PERMISSIONS.admin,
+          ...user,
+          admin_role: 'super_admin',
+          permissions: ROLE_PERMISSIONS.super_admin,
           login_count: 15,
           is_active: true,
           department: '技术部',
@@ -114,33 +113,29 @@ export function AdminProvider({ children }: AdminProviderProps) {
   // 初始化管理员状态
   useEffect(() => {
     const initAdminMode = async () => {
-      if (!isAuthenticated || !user) {
-        setAdminUser(null);
-        return;
-      }
-
-      const adminMode = localStorage.getItem('admin_mode');
-      const adminData = localStorage.getItem('admin_data');
-      
-      if (adminMode === 'true' && adminData) {
-        try {
-          const parsedAdminData = JSON.parse(adminData);
-          // 验证管理员权限是否仍然有效
-          const currentAdminData = await checkAdminAccess(user.id);
-          if (currentAdminData) {
-            setAdminUser(currentAdminData);
+      try {
+        // 如果用户已登录，自动检查是否有管理员权限
+        if (isAuthenticated && user) {
+          const adminData = await checkAdminAccess(user.id);
+          if (adminData) {
+            setAdminUser(adminData);
+            localStorage.setItem('admin_mode', 'true');
+            localStorage.setItem('admin_data', JSON.stringify(adminData));
           } else {
-            // 权限已失效，清除本地数据
-            exitAdmin();
+            setAdminUser(null);
           }
-        } catch (error) {
-          console.error('Init admin mode error:', error);
-          exitAdmin();
+        } else {
+          setAdminUser(null);
         }
+      } catch (error) {
+        console.error('Init admin mode error:', error);
+        setAdminUser(null);
       }
     };
 
-    initAdminMode();
+    initAdminMode().finally(() => {
+      setIsLoading(false);
+    });
   }, [isAuthenticated, user]);
 
   // 用户登出时清除管理员状态

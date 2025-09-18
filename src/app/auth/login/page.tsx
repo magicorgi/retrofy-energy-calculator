@@ -22,7 +22,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { login, loginWithWeChat, sendVerificationCode, isLoading } = useAuth();
+  const { login, loginWithEmail, loginWithWeChat, sendVerificationCode, isLoading } = useAuth();
   
   // 手机号登录状态
   const [phoneData, setPhoneData] = useState({
@@ -33,6 +33,13 @@ export default function LoginPage() {
   const [countdown, setCountdown] = useState(0);
   const [phoneError, setPhoneError] = useState('');
   const [codeError, setCodeError] = useState('');
+
+  // 邮箱登录状态
+  const [emailData, setEmailData] = useState({
+    email: '',
+    password: ''
+  });
+  const [emailError, setEmailError] = useState('');
 
   // 微信登录状态
   const [wechatLoading, setWechatLoading] = useState(false);
@@ -108,6 +115,19 @@ export default function LoginPage() {
     }
   };
 
+  // 邮箱登录处理
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailError('');
+    
+    try {
+      await loginWithEmail(emailData.email, emailData.password);
+      router.push('/dashboard');
+    } catch (error: any) {
+      setEmailError(error.message || '登录失败，请重试');
+    }
+  };
+
   // 微信登录
   const handleWeChatLogin = async () => {
     setWechatLoading(true);
@@ -154,10 +174,14 @@ export default function LoginPage() {
           
           <CardContent>
             <Tabs defaultValue="phone" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
+              <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="phone" className="flex items-center gap-2">
                   <Phone className="w-4 h-4" />
                   手机登录
+                </TabsTrigger>
+                <TabsTrigger value="email" className="flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  邮箱登录
                 </TabsTrigger>
                 <TabsTrigger value="wechat" className="flex items-center gap-2">
                   <MessageSquare className="w-4 h-4" />
@@ -242,6 +266,65 @@ export default function LoginPage() {
                         <User className="w-4 h-4 mr-2" />
                         登录
                       </>
+                    )}
+                  </Button>
+                </form>
+              </TabsContent>
+
+              {/* 邮箱登录 */}
+              <TabsContent value="email" className="space-y-4 mt-6">
+                <form onSubmit={handleEmailLogin} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email">邮箱地址</Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="请输入邮箱地址"
+                        value={emailData.email}
+                        onChange={(e) => setEmailData(prev => ({ ...prev, email: e.target.value }))}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="email-password">密码</Label>
+                    <div className="relative">
+                      <Shield className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                      <Input
+                        id="email-password"
+                        type="password"
+                        placeholder="请输入密码"
+                        value={emailData.password}
+                        onChange={(e) => setEmailData(prev => ({ ...prev, password: e.target.value }))}
+                        className="pl-10"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  {emailError && (
+                    <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-lg">
+                      <AlertCircle className="w-4 h-4" />
+                      <span className="text-sm">{emailError}</span>
+                    </div>
+                  )}
+
+                  <Button 
+                    type="submit" 
+                    className="w-full"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <div className="flex items-center gap-2">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                        登录中...
+                      </div>
+                    ) : (
+                      '邮箱登录'
                     )}
                   </Button>
                 </form>

@@ -31,11 +31,14 @@ export interface Product {
 }
 
 export type ProductCategory = 
-  | 'chiller' // 冷水机组
-  | 'heat_pump' // 热泵
-  | 'industrial_hp' // 工业高温热泵
-  | 'air_conditioning' // 空调
-  | 'refrigeration' // 制冷设备
+  | 'compressor' // 压缩机
+  | 'frequency_converter' // 变频器
+  | 'heat_exchanger' // 换热器
+  | 'hydraulic_valve' // 水力平衡阀
+  | 'sensor' // 传感器
+  | 'control_system' // 控制系统
+  | 'expansion_valve' // 膨胀阀
+  | 'filter_drier' // 过滤器干燥器
   | 'other'; // 其他
 
 export interface ProductFilter {

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -31,9 +31,27 @@ interface AdminLayoutProps {
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { adminUser, isAdmin, hasPermission, exitAdmin } = useAdmin();
+  const { adminUser, isAdmin, isLoading, hasPermission, exitAdmin } = useAdmin();
   const { user } = useAuth();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // 确保组件在客户端挂载后再渲染
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // 在挂载前或加载中显示加载状态
+  if (!isMounted || isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">加载中...</p>
+        </div>
+      </div>
+    );
+  }
 
   // 如果不是管理员，显示权限提示
   if (!isAdmin) {
@@ -46,16 +64,16 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             您没有访问后台管理系统的权限，请联系管理员获取权限。
           </p>
           <div className="flex gap-3 justify-center">
+            <Button asChild>
+              <Link href="/auth/login">
+                <Shield className="w-4 h-4 mr-2" />
+                管理员登录
+              </Link>
+            </Button>
             <Button variant="outline" asChild>
               <Link href="/">
                 <Home className="w-4 h-4 mr-2" />
                 返回首页
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link href="/dashboard">
-                <Users className="w-4 h-4 mr-2" />
-                用户中心
               </Link>
             </Button>
           </div>
@@ -251,8 +269,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             {/* 用户信息 */}
             <div className="flex items-center gap-2 text-sm">
               <div className="hidden md:block text-right">
-                <div className="font-medium text-gray-900">{user?.nickname}</div>
-                <div className="text-gray-500">{user?.phone}</div>
+                <div className="font-medium text-gray-900">{adminUser?.nickname}</div>
+                <div className="text-gray-500">{adminUser?.email || adminUser?.phone}</div>
               </div>
             </div>
           </div>

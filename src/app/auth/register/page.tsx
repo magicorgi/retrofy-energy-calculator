@@ -31,6 +31,7 @@ export default function RegisterPage() {
     phone: '',
     verification_code: '',
     nickname: '',
+    email: '', // 新增邮箱字段
     company: '',
     industry: '',
     region: '',
@@ -56,6 +57,12 @@ export default function RegisterPage() {
     return phoneRegex.test(phone);
   };
 
+  // 验证邮箱格式
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
   // 表单验证
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -72,6 +79,11 @@ export default function RegisterPage() {
 
     if (!formData.nickname) {
       newErrors.nickname = '请输入昵称';
+    }
+
+    // 邮箱验证（可选）
+    if (formData.email && !validateEmail(formData.email)) {
+      newErrors.email = '请输入正确的邮箱格式';
     }
 
     if (!formData.industry) {
@@ -136,10 +148,16 @@ export default function RegisterPage() {
 
     try {
       // 在实际应用中，这里会调用注册API
-      // 注册成功后自动登录
+      // 注册成功后自动登录，传递所有用户信息
       await login({
         phone: formData.phone,
-        verification_code: formData.verification_code
+        verification_code: formData.verification_code,
+        nickname: formData.nickname,
+        email: formData.email,
+        company: formData.company,
+        industry: formData.industry,
+        region: formData.region,
+        role: formData.role
       });
       
       router.push('/dashboard');
@@ -260,6 +278,28 @@ export default function RegisterPage() {
                   <div className="flex items-center gap-1 text-sm text-red-600">
                     <AlertCircle className="w-4 h-4" />
                     {errors.nickname}
+                  </div>
+                )}
+              </div>
+
+              {/* 邮箱地址 */}
+              <div className="space-y-2">
+                <Label htmlFor="email">邮箱地址</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="请输入邮箱地址（选填）"
+                    className="pl-10"
+                    value={formData.email}
+                    onChange={(e) => handleInputChange('email', e.target.value)}
+                  />
+                </div>
+                {errors.email && (
+                  <div className="flex items-center gap-1 text-sm text-red-600">
+                    <AlertCircle className="w-4 h-4" />
+                    {errors.email}
                   </div>
                 )}
               </div>

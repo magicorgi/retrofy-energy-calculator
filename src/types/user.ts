@@ -54,6 +54,13 @@ export interface UserProfile {
 export interface LoginRequest {
   phone: string;
   verification_code: string;
+  // 注册时的额外信息
+  nickname?: string;
+  email?: string;
+  company?: string;
+  industry?: string;
+  region?: string;
+  role?: UserRole;
 }
 
 export interface WeChatLoginRequest {

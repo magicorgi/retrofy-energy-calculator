@@ -8,6 +8,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   login: (data: LoginRequest) => Promise<void>;
+  loginWithEmail: (email: string, password: string) => Promise<void>;
   loginWithWeChat: (data: WeChatLoginRequest) => Promise<void>;
   logout: () => void;
   sendVerificationCode: (data: VerificationCodeRequest) => Promise<void>;
@@ -69,10 +70,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         user: {
           id: '1',
           phone: data.phone,
-          nickname: `用户${data.phone.slice(-4)}`,
-          industry: '建筑设计',
-          region: '北京市',
-          role: 'individual',
+          email: data.email || '', // 使用注册时提供的邮箱
+          nickname: data.nickname || `用户${data.phone.slice(-4)}`,
+          company: data.company || '',
+          industry: data.industry || '建筑设计',
+          region: data.region || '北京市',
+          role: data.role || 'individual',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
           status: 'active',
@@ -94,6 +97,60 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     } catch (error) {
       console.error('Login error:', error);
+      throw new Error('登录失败，请重试');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 邮箱登录
+  const loginWithEmail = async (email: string, password: string) => {
+    try {
+      setIsLoading(true);
+      
+      // 检查是否是管理员邮箱
+      if (email === 'admin@danfoss.com.cn' && password === 'admin12345') {
+        // 创建管理员用户
+        const adminUser: User = {
+          id: 'admin_001',
+          phone: '',
+          email: email,
+          nickname: '系统管理员',
+          avatar: '',
+          company: '丹佛斯（中国）有限公司',
+          industry: '暖通空调',
+          region: '全国',
+          role: 'system_admin',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          status: 'active',
+          verified: true
+        };
+        
+        const adminResponse = {
+          user: adminUser,
+          token: 'admin_jwt_token_' + Date.now(),
+          refresh_token: 'admin_refresh_token_' + Date.now(),
+          expires_in: 7200
+        };
+        
+        // 模拟API调用延迟
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        setUser(adminResponse.user);
+        localStorage.setItem('auth_token', adminResponse.token);
+        localStorage.setItem('refresh_token', adminResponse.refresh_token);
+        localStorage.setItem('user_data', JSON.stringify(adminResponse.user));
+        localStorage.setItem('token_expires_at', (Date.now() + adminResponse.expires_in * 1000).toString());
+        
+        return;
+      }
+      
+      // 其他邮箱登录逻辑（可以扩展）
+      throw new Error('邮箱或密码错误');
+      
+    } catch (error) {
+      console.error('Email login error:', error);
       throw new Error('登录失败，请重试');
     } finally {
       setIsLoading(false);
@@ -246,6 +303,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     isLoading,
     isAuthenticated: !!user,
     login,
+    loginWithEmail,
     loginWithWeChat,
     logout,
     sendVerificationCode,

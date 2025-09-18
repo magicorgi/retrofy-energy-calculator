@@ -131,11 +131,11 @@ export default function ChillerCalculatorPage() {
   ]
 
   const chillerDB = [
-    { type: "magnetic_centrifugal", label: "磁悬浮离心", capacity_range: [300, 1500], iplv: 10.5, cop: 6.8, price: 1200, brand: "丹佛斯TurboCor" },
-    { type: "vfd_centrifugal", label: "变频离心", capacity_range: [500, 2000], iplv: 9.2, cop: 6.2, price: 900, brand: "约克YMC²" },
-    { type: "efficient_screw", label: "高效螺杆", capacity_range: [150, 800], iplv: 7.5, cop: 5.8, price: 675, brand: "开利30XW" },
-    { type: "normal_screw", label: "普通螺杆", capacity_range: [150, 800], iplv: 5.5, cop: 4.8, price: 0, brand: "基准对照" },
-    { type: "absorption", label: "溴化锂", capacity_range: [500, 2000], iplv: 1.3, cop: 1.3, price: 625, brand: "双良烟气型" }
+    { type: "magnetic_centrifugal", label: "磁悬浮离心", capacity_range: [300, 1500], iplv: 10.5, cop: 6.8, price: 650, brand: "丹佛斯TurboCor" },
+    { type: "vfd_centrifugal", label: "变频离心", capacity_range: [500, 2000], iplv: 9.2, cop: 6.2, price: 510, brand: "约克YMC²" },
+    { type: "efficient_screw", label: "高效螺杆", capacity_range: [150, 800], iplv: 7.5, cop: 5.8, price: 420, brand: "开利30XW" },
+    { type: "normal_screw", label: "普通螺杆", capacity_range: [150, 800], iplv: 5.5, cop: 4.8, price: 285, brand: "基准对照" },
+    { type: "absorption", label: "溴化锂", capacity_range: [500, 2000], iplv: 1.3, cop: 1.3, price: 800, brand: "双良烟气型" }
   ]
 
   const partLoadData = {
