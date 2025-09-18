@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -123,7 +123,7 @@ const mockProducts: Product[] = [
   }
 ];
 
-export default function ProductComparePage() {
+function ProductCompareContent() {
   const searchParams = useSearchParams();
   const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
@@ -568,6 +568,21 @@ function ContactModal({ product, onClose }: ContactModalProps) {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ProductComparePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">加载中...</p>
+        </div>
+      </div>
+    }>
+      <ProductCompareContent />
+    </Suspense>
   );
 }
 
