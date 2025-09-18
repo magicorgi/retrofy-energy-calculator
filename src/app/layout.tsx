@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "专业的建筑节能改造平台",
-  description: "专业的建筑节能改造计算工具和解决方案平台，提供HVAC节能改造、产品推荐、案例库等服务",
+  title: "RetroPro 节改专家 - 专业的建筑节能改造平台",
+  description: "RetroPro节改专家是专业的建筑节能改造计算工具和解决方案平台，提供HVAC节能改造、丹佛斯产品推荐、案例库、专家预约等服务",
 };
 
 export default function RootLayout({
