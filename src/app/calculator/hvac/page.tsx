@@ -7,13 +7,12 @@ import {
   Droplets, 
   Fan, 
   ArrowRight,
-  Calculator,
-  TrendingDown,
   Zap,
   Settings,
   Recycle,
   Clock,
-  Wind
+  Wind,
+  Factory
 } from "lucide-react"
 
 export default function HVACCalculatorPage() {
@@ -43,8 +42,22 @@ export default function HVACCalculatorPage() {
       time: "8-12分钟",
       category: "冷热源侧",
       categoryPath: "source",
-      status: "coming_soon",
+      status: "available",
       color: "from-orange-500 to-red-500"
+    },
+    {
+      id: "industrial-heat-pump",
+      title: "工业高温热泵计算器",
+      description: "85-150℃工业高温热泵系统节能改造计算",
+      icon: Factory,
+      features: ["高温工艺适配", "COP修正计算", "NPV/IRR分析", "碳交易收益"],
+      difficulty: "专家级",
+      time: "10-15分钟",
+      category: "冷热源侧",
+      categoryPath: "source",
+      status: "available",
+      color: "from-purple-500 to-pink-500",
+      new: true
     },
     {
       id: "waste-heat",
@@ -244,8 +257,8 @@ export default function HVACCalculatorPage() {
           <div className="text-sm text-gray-600">平均回收期</div>
         </div>
         <div className="text-center p-4 bg-purple-50 rounded-lg">
-          <div className="text-2xl font-bold text-purple-600 mb-1">5个</div>
-          <div className="text-sm text-gray-600">可用工具</div>
+          <div className="text-2xl font-bold text-purple-600 mb-1">7个</div>
+          <div className="text-sm text-gray-600">计算工具</div>
         </div>
         <div className="text-center p-4 bg-orange-50 rounded-lg">
           <div className="text-2xl font-bold text-orange-600 mb-1">1200+</div>

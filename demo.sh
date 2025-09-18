@@ -46,3 +46,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "🌐 正在打开浏览器..."
     open http://localhost:3000
 fi
+
+
+

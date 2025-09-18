@@ -132,8 +132,8 @@ export default function SourceCalculatorsPage() {
               <div className="text-sm text-gray-600">平均回收期</div>
             </div>
             <div className="text-center p-4 bg-purple-50 rounded-lg">
-              <div className="text-2xl font-bold text-purple-600 mb-1">3个</div>
-              <div className="text-sm text-gray-600">可用工具</div>
+              <div className="text-2xl font-bold text-purple-600 mb-1">4个</div>
+              <div className="text-sm text-gray-600">计算工具</div>
             </div>
             <div className="text-center p-4 bg-orange-50 rounded-lg">
               <div className="text-2xl font-bold text-orange-600 mb-1">800+</div>

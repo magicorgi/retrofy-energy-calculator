@@ -16,12 +16,18 @@ import {
   Zap,
   Target,
   Wrench,
-  Home
+  Home,
+  LogOut,
+  Settings
 } from "lucide-react"
+import { useAuth } from "@/contexts/AuthContext"
+import { useAdmin } from "@/contexts/AdminContext"
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSuperAdmin, setIsSuperAdmin] = useState(false) // 超级管理员状态
+  const { user, isAuthenticated, logout } = useAuth()
+  const { isAdmin, switchToAdmin } = useAdmin()
 
   const navItems = [
     { href: "/calculator", label: "节能计算器", icon: Calculator, public: true },
@@ -69,17 +75,67 @@ export function Navigation() {
 
           {/* User Actions */}
           <div className="hidden md:flex items-center space-x-3">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/auth/login">
-                <User className="w-4 h-4 mr-2" />
-                登录
-              </Link>
-            </Button>
-            <Button size="sm" className="bg-green-600 hover:bg-green-700" asChild>
-              <Link href="/auth/register">
-                免费注册
-              </Link>
-            </Button>
+            {isAuthenticated ? (
+              <>
+                <div className="flex items-center space-x-2">
+                  <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4 text-white" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700">
+                    {user?.nickname || user?.phone}
+                  </span>
+                </div>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/dashboard">
+                    <Settings className="w-4 h-4 mr-2" />
+                    用户中心
+                  </Link>
+                </Button>
+                {!isAdmin && (
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={async () => {
+                      try {
+                        await switchToAdmin();
+                        window.location.href = '/admin';
+                      } catch (error) {
+                        // 权限检查失败，不显示错误
+                      }
+                    }}
+                  >
+                    <Settings className="w-4 h-4 mr-2" />
+                    管理后台
+                  </Button>
+                )}
+                {isAdmin && (
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link href="/admin">
+                      <Settings className="w-4 h-4 mr-2" />
+                      管理后台
+                    </Link>
+                  </Button>
+                )}
+                <Button variant="ghost" size="sm" onClick={logout}>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  退出
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href="/auth/login">
+                    <User className="w-4 h-4 mr-2" />
+                    登录
+                  </Link>
+                </Button>
+                <Button size="sm" className="bg-green-600 hover:bg-green-700" asChild>
+                  <Link href="/auth/register">
+                    免费注册
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -110,17 +166,42 @@ export function Navigation() {
                 </Link>
               ))}
               <div className="flex flex-col space-y-2 pt-3 border-t border-gray-200">
-                <Button variant="ghost" size="sm" className="justify-start" asChild>
-                  <Link href="/auth/login">
-                    <User className="w-4 h-4 mr-2" />
-                    登录
-                  </Link>
-                </Button>
-                <Button size="sm" className="bg-green-600 hover:bg-green-700 justify-start" asChild>
-                  <Link href="/auth/register">
-                    免费注册
-                  </Link>
-                </Button>
+                {isAuthenticated ? (
+                  <>
+                    <div className="flex items-center space-x-2 py-2 px-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center">
+                        <User className="w-4 h-4 text-white" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">
+                        {user?.nickname || user?.phone}
+                      </span>
+                    </div>
+                    <Button variant="ghost" size="sm" className="justify-start" asChild>
+                      <Link href="/dashboard">
+                        <Settings className="w-4 h-4 mr-2" />
+                        用户中心
+                      </Link>
+                    </Button>
+                    <Button variant="ghost" size="sm" className="justify-start" onClick={logout}>
+                      <LogOut className="w-4 h-4 mr-2" />
+                      退出登录
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button variant="ghost" size="sm" className="justify-start" asChild>
+                      <Link href="/auth/login">
+                        <User className="w-4 h-4 mr-2" />
+                        登录
+                      </Link>
+                    </Button>
+                    <Button size="sm" className="bg-green-600 hover:bg-green-700 justify-start" asChild>
+                      <Link href="/auth/register">
+                        免费注册
+                      </Link>
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
