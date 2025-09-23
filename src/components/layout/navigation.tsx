@@ -18,7 +18,8 @@ import {
   Wrench,
   Home,
   LogOut,
-  Settings
+  Settings,
+  ClipboardList
 } from "lucide-react"
 import { useAuth } from "@/contexts/AuthContext"
 import { useAdmin } from "@/contexts/AdminContext"
@@ -31,6 +32,7 @@ export function Navigation() {
 
   const navItems = [
     { href: "/calculator", label: "节能计算器", icon: Calculator, public: true },
+    { href: "/demand-collection", label: "需求收集", icon: ClipboardList, public: true },
     { href: "/ecomatch", label: "EcoMatch", icon: Target, superAdminOnly: true },
     { href: "/project-assistant", label: "改造项目助手", icon: Wrench, superAdminOnly: true },
     { href: "/products", label: "产品推荐", icon: Package, public: true },
