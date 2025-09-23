@@ -36,7 +36,10 @@ export default function DemandCollectionPage() {
     contactName: '',
     contactPhone: '',
     contactEmail: '',
+    contactPosition: '',
+    contactLevel: '',
     region: '',
+    city: '',
     detailedAddress: '',
     ownerName: '',
     
@@ -129,10 +132,19 @@ export default function DemandCollectionPage() {
   };
 
   const updateField = (field: string, value: any) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+    setFormData(prev => {
+      const newData = {
+        ...prev,
+        [field]: value
+      };
+      
+      // 当地区改变时，清空城市选择
+      if (field === 'region') {
+        newData.city = '';
+      }
+      
+      return newData;
+    });
   };
 
   const updateEnergyConsumption = (field: string, value: any) => {
@@ -332,7 +344,7 @@ export default function DemandCollectionPage() {
               </div>
             </div>
             
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   邮箱地址
@@ -346,6 +358,50 @@ export default function DemandCollectionPage() {
                 />
               </div>
               
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  职位 *
+                </label>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  value={formData.contactPosition}
+                  onChange={(e) => updateField('contactPosition', e.target.value)}
+                >
+                  <option value="">请选择职位</option>
+                  <option value="总经理">总经理</option>
+                  <option value="副总经理">副总经理</option>
+                  <option value="总工程师">总工程师</option>
+                  <option value="副总工程师">副总工程师</option>
+                  <option value="部门经理">部门经理</option>
+                  <option value="副部门经理">副部门经理</option>
+                  <option value="项目经理">项目经理</option>
+                  <option value="主管">主管</option>
+                  <option value="工程师">工程师</option>
+                  <option value="助理工程师">助理工程师</option>
+                  <option value="技术员">技术员</option>
+                  <option value="其他">其他</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  职级
+                </label>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  value={formData.contactLevel}
+                  onChange={(e) => updateField('contactLevel', e.target.value)}
+                >
+                  <option value="">请选择职级</option>
+                  <option value="高级">高级</option>
+                  <option value="中级">中级</option>
+                  <option value="初级">初级</option>
+                  <option value="无">无</option>
+                </select>
+              </div>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   所在地区 *
@@ -363,6 +419,108 @@ export default function DemandCollectionPage() {
                   <option value="西南">西南地区</option>
                   <option value="西北">西北地区</option>
                   <option value="东北">东北地区</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  所在城市 *
+                </label>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  value={formData.city}
+                  onChange={(e) => updateField('city', e.target.value)}
+                >
+                  <option value="">请先选择地区</option>
+                  {formData.region === '华北' && (
+                    <>
+                      <option value="北京">北京</option>
+                      <option value="天津">天津</option>
+                      <option value="石家庄">石家庄</option>
+                      <option value="太原">太原</option>
+                      <option value="呼和浩特">呼和浩特</option>
+                      <option value="唐山">唐山</option>
+                      <option value="秦皇岛">秦皇岛</option>
+                      <option value="保定">保定</option>
+                      <option value="张家口">张家口</option>
+                    </>
+                  )}
+                  {formData.region === '华东' && (
+                    <>
+                      <option value="上海">上海</option>
+                      <option value="南京">南京</option>
+                      <option value="杭州">杭州</option>
+                      <option value="合肥">合肥</option>
+                      <option value="福州">福州</option>
+                      <option value="南昌">南昌</option>
+                      <option value="济南">济南</option>
+                      <option value="苏州">苏州</option>
+                      <option value="无锡">无锡</option>
+                      <option value="宁波">宁波</option>
+                      <option value="青岛">青岛</option>
+                    </>
+                  )}
+                  {formData.region === '华南' && (
+                    <>
+                      <option value="广州">广州</option>
+                      <option value="深圳">深圳</option>
+                      <option value="珠海">珠海</option>
+                      <option value="汕头">汕头</option>
+                      <option value="佛山">佛山</option>
+                      <option value="湛江">湛江</option>
+                      <option value="南宁">南宁</option>
+                      <option value="海口">海口</option>
+                      <option value="三亚">三亚</option>
+                    </>
+                  )}
+                  {formData.region === '华中' && (
+                    <>
+                      <option value="郑州">郑州</option>
+                      <option value="武汉">武汉</option>
+                      <option value="长沙">长沙</option>
+                      <option value="洛阳">洛阳</option>
+                      <option value="宜昌">宜昌</option>
+                      <option value="襄阳">襄阳</option>
+                      <option value="株洲">株洲</option>
+                      <option value="湘潭">湘潭</option>
+                    </>
+                  )}
+                  {formData.region === '西南' && (
+                    <>
+                      <option value="重庆">重庆</option>
+                      <option value="成都">成都</option>
+                      <option value="贵阳">贵阳</option>
+                      <option value="昆明">昆明</option>
+                      <option value="拉萨">拉萨</option>
+                      <option value="绵阳">绵阳</option>
+                      <option value="遵义">遵义</option>
+                      <option value="大理">大理</option>
+                    </>
+                  )}
+                  {formData.region === '西北' && (
+                    <>
+                      <option value="西安">西安</option>
+                      <option value="兰州">兰州</option>
+                      <option value="西宁">西宁</option>
+                      <option value="银川">银川</option>
+                      <option value="乌鲁木齐">乌鲁木齐</option>
+                      <option value="宝鸡">宝鸡</option>
+                      <option value="天水">天水</option>
+                      <option value="石河子">石河子</option>
+                    </>
+                  )}
+                  {formData.region === '东北' && (
+                    <>
+                      <option value="沈阳">沈阳</option>
+                      <option value="大连">大连</option>
+                      <option value="长春">长春</option>
+                      <option value="哈尔滨">哈尔滨</option>
+                      <option value="鞍山">鞍山</option>
+                      <option value="抚顺">抚顺</option>
+                      <option value="吉林">吉林</option>
+                      <option value="齐齐哈尔">齐齐哈尔</option>
+                    </>
+                  )}
                 </select>
               </div>
             </div>
