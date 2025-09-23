@@ -99,7 +99,7 @@ export default function SourceCalculatorsPage() {
               </Link>
               <ChevronRight className="w-4 h-4" />
               <Link href="/calculator/hvac" className="hover:text-blue-600 transition-colors">
-                HVAC节能改造
+                暖通空调节能改造
               </Link>
               <ChevronRight className="w-4 h-4" />
               <span className="text-gray-900 font-medium">冷热源侧改造</span>
@@ -107,7 +107,7 @@ export default function SourceCalculatorsPage() {
             <Button variant="outline" size="sm" asChild>
               <Link href="/calculator/hvac">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                返回HVAC
+                返回暖通空调
               </Link>
             </Button>
           </div>
@@ -116,7 +116,7 @@ export default function SourceCalculatorsPage() {
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">冷热源侧节能改造计算器</h1>
             <p className="text-gray-600 max-w-3xl mx-auto">
-              冷热源设备是HVAC系统的核心，通常占整个系统能耗的60-70%，
+              冷热源设备是暖通空调系统的核心，通常占整个系统能耗的60-70%，
               是节能改造的重点环节，平均可实现25-40%的节能效果
             </p>
           </div>

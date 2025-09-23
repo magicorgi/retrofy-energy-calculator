@@ -84,7 +84,7 @@ interface SystemConfig {
 const mockSystemConfig: SystemConfig = {
   site_name: 'Retrofy 节能改造平台',
   site_description: '专业的建筑节能改造计算工具和解决方案平台',
-  site_keywords: '节能改造,热泵,冷水机组,建筑节能,HVAC',
+  site_keywords: '节能改造,热泵,冷水机组,建筑节能,暖通空调',
   admin_email: 'admin@retrofy.com',
   support_phone: '400-123-4567',
   
@@ -771,4 +771,6 @@ export default function SystemSettingsPage() {
     </div>
   );
 }
+
+
 

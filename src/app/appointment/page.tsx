@@ -333,7 +333,7 @@ export default function AppointmentPage() {
                   <Textarea
                     value={formData.current_system}
                     onChange={(e) => updateField('current_system', e.target.value)}
-                    placeholder="请描述现有的HVAC系统情况..."
+                    placeholder="请描述现有系统情况..."
                     rows={3}
                   />
                 </div>

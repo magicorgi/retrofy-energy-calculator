@@ -116,7 +116,7 @@ export default function LightingCalculatorsPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button variant="outline" asChild>
                   <Link href="/calculator/hvac/source/chiller">
-                    体验HVAC计算器
+                    体验暖通空调计算器
                   </Link>
                 </Button>
                 <Button asChild>
@@ -186,6 +186,8 @@ export default function LightingCalculatorsPage() {
     </div>
   )
 }
+
+
 
 
 

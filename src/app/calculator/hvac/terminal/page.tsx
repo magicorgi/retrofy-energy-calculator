@@ -24,7 +24,7 @@ export default function TerminalCalculatorsPage() {
               </Link>
               <ChevronRight className="w-4 h-4" />
               <Link href="/calculator/hvac" className="hover:text-blue-600 transition-colors">
-                HVAC节能改造
+                暖通空调节能改造
               </Link>
               <ChevronRight className="w-4 h-4" />
               <span className="text-gray-900 font-medium">末端使用改造</span>
@@ -32,7 +32,7 @@ export default function TerminalCalculatorsPage() {
             <Button variant="outline" size="sm" asChild>
               <Link href="/calculator/hvac">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                返回HVAC
+                返回暖通空调
               </Link>
             </Button>
           </div>
@@ -47,7 +47,7 @@ export default function TerminalCalculatorsPage() {
               <Badge className="ml-3 bg-purple-600">规划中</Badge>
             </div>
             <p className="text-gray-600 max-w-3xl mx-auto">
-              末端设备是HVAC系统与用户直接接触的部分，包含风机盘管、新风系统、温控系统等，
+              末端设备是暖通空调系统与用户直接接触的部分，包含风机盘管、新风系统、温控系统等，
               通过智能控制和设备优化可实现10-20%的节能效果
             </p>
           </div>
@@ -201,6 +201,8 @@ export default function TerminalCalculatorsPage() {
     </div>
   )
 }
+
+
 
 
 

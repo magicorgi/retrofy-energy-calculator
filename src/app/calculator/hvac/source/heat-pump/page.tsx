@@ -442,7 +442,7 @@ export default function HeatPumpCalculatorPage() {
                 </Link>
                 <ChevronRight className="w-4 h-4" />
                 <Link href="/calculator/hvac" className="hover:text-blue-600 transition-colors">
-                  HVAC节能改造
+                  暖通空调节能改造
                 </Link>
                 <ChevronRight className="w-4 h-4" />
                 <Link href="/calculator/hvac/source" className="hover:text-blue-600 transition-colors">
@@ -712,7 +712,7 @@ export default function HeatPumpCalculatorPage() {
               </Link>
               <ChevronRight className="w-4 h-4" />
               <Link href="/calculator/hvac" className="hover:text-blue-600 transition-colors">
-                HVAC节能改造
+                暖通空调节能改造
               </Link>
               <ChevronRight className="w-4 h-4" />
               <Link href="/calculator/hvac/source" className="hover:text-blue-600 transition-colors">

@@ -14,7 +14,7 @@
 2. 点击右上角 "+" → "New repository"
 3. 填写仓库信息：
    - **Repository name**: `retrofy-energy-calculator`
-   - **Description**: `专业的HVAC节能改造计算平台`
+   - **Description**: `专业的改造计算平台`
    - **Visibility**: Public (便于Vercel部署)
 4. **不要**勾选 "Add a README file"（我们已有代码）
 5. 点击 "Create repository"
@@ -85,6 +85,8 @@ git push -u origin main
 - 响应式设计
 
 **请提供您的GitHub用户名，我来帮您执行推送命令！** 🚀
+
+
 
 
 

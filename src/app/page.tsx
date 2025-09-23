@@ -23,7 +23,7 @@ export default function HomePage() {
     {
       icon: Calculator,
       title: "专业计算器",
-      description: "精确的HVAC节能改造计算，包含冷热源、输配系统等多个模块",
+      description: "精确的改造计算，包含冷热源、输配系统等多个模块",
       color: "text-blue-600"
     },
     {
@@ -78,7 +78,7 @@ export default function HomePage() {
             </span>
           </h1>
           <p className="text-xl text-gray-800 mb-8 max-w-2xl mx-auto">
-            专业的HVAC节能改造平台，帮助您计算改造效果，选择最优方案
+            专业的建筑改造平台，帮助您计算改造效果，选择最优方案
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="bg-green-600 hover:bg-green-700" asChild>

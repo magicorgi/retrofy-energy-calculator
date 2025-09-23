@@ -29,7 +29,7 @@ export default function DistributionCalculatorsPage() {
     {
       id: "hydraulic",
       title: "水力平衡系统优化计算器",
-      description: "HVAC水系统水力平衡分析与优化设计",
+      description: "暖通空调水系统水力平衡分析与优化设计",
       icon: Settings,
       features: ["水力计算", "平衡阀选型", "系统优化", "能耗分析"],
       difficulty: "高级",
@@ -61,7 +61,7 @@ export default function DistributionCalculatorsPage() {
               </Link>
               <ChevronRight className="w-4 h-4" />
               <Link href="/calculator/hvac" className="hover:text-blue-600 transition-colors">
-                HVAC节能改造
+                暖通空调节能改造
               </Link>
               <ChevronRight className="w-4 h-4" />
               <span className="text-gray-900 font-medium">输配系统改造</span>
@@ -69,7 +69,7 @@ export default function DistributionCalculatorsPage() {
             <Button variant="outline" size="sm" asChild>
               <Link href="/calculator/hvac">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                返回HVAC
+                返回暖通空调
               </Link>
             </Button>
           </div>
@@ -78,7 +78,7 @@ export default function DistributionCalculatorsPage() {
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">输配系统节能改造计算器</h1>
             <p className="text-gray-600 max-w-3xl mx-auto">
-              输配系统是HVAC系统的&quot;血管&quot;，负责冷热量的传输分配，
+              输配系统是暖通空调系统的&quot;血管&quot;，负责冷热量的传输分配，
               通过水泵变频、水力平衡等技术手段，可实现15-25%的节能效果
             </p>
           </div>

@@ -19,7 +19,7 @@ export default function CalculatorPage() {
   const calculators = [
     {
       id: "hvac",
-      title: "HVAC节能改造",
+      title: "暖通空调改造",
       description: "暖通空调系统节能优化计算器",
       icon: Thermometer,
       color: "from-blue-500 to-cyan-500",

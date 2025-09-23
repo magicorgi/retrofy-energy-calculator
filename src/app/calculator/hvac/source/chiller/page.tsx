@@ -261,7 +261,7 @@ export default function ChillerCalculatorPage() {
             </Link>
             <ChevronRight className="w-4 h-4" />
             <Link href="/calculator/hvac" className="hover:text-blue-600 transition-colors">
-              HVAC节能改造
+              暖通空调节能改造
             </Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-gray-900 font-medium">高效主机选型计算器 Pro</span>
@@ -272,7 +272,7 @@ export default function ChillerCalculatorPage() {
             <Button variant="outline" size="sm" asChild>
               <Link href="/calculator/hvac">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                返回HVAC
+                返回暖通空调
               </Link>
             </Button>
             <Button variant="outline" onClick={() => setShowResults(false)}>
@@ -630,7 +630,7 @@ export default function ChillerCalculatorPage() {
           </Link>
           <ChevronRight className="w-4 h-4" />
           <Link href="/calculator/hvac" className="hover:text-blue-600 transition-colors">
-            HVAC节能改造
+            暖通空调节能改造
           </Link>
           <ChevronRight className="w-4 h-4" />
           <span className="text-gray-900 font-medium">高效主机选型计算器 Pro</span>
@@ -638,7 +638,7 @@ export default function ChillerCalculatorPage() {
         <Button variant="outline" size="sm" asChild>
           <Link href="/calculator/hvac">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            返回HVAC
+            返回暖通空调
           </Link>
         </Button>
       </div>
@@ -647,7 +647,7 @@ export default function ChillerCalculatorPage() {
       <div className="text-center">
         <h1 className="text-3xl font-bold text-gray-900 mb-4">高效主机选型计算器 Pro</h1>
         <p className="text-gray-600 max-w-3xl mx-auto">
-          基于5模块架构的专业HVAC节能计算系统，精确计算节能效果和投资回收期
+          基于5模块架构的专业暖通空调节能计算系统，精确计算节能效果和投资回收期
         </p>
       </div>
 

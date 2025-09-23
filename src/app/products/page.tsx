@@ -179,7 +179,7 @@ const mockProducts: Product[] = [
     contact_phone: '400-890-8986',
     contact_email: 'china.sensors@danfoss.com',
     company: '丹佛斯（中国）有限公司',
-    description: '高精度压力传感器，适用于HVAC系统压力监测和控制',
+    description: '高精度压力传感器，适用于暖通空调系统压力监测和控制',
     features: ['高精度测量', '长期稳定', '抗冲击', '多种输出', 'IO-Link通讯'],
     specifications: {
       '测量范围': '0-400bar',

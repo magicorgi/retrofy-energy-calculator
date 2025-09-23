@@ -24,7 +24,7 @@ export default function HydraulicCalculatorPage() {
               </Link>
               <ChevronRight className="w-4 h-4" />
               <Link href="/calculator/hvac" className="hover:text-blue-600 transition-colors">
-                HVAC节能改造
+                暖通空调节能改造
               </Link>
               <ChevronRight className="w-4 h-4" />
               <Link href="/calculator/hvac/distribution" className="hover:text-blue-600 transition-colors">
@@ -51,7 +51,7 @@ export default function HydraulicCalculatorPage() {
               <Badge className="ml-3 bg-green-600">即将上线</Badge>
             </div>
             <p className="text-gray-600 max-w-3xl mx-auto">
-              HVAC水系统水力平衡分析与优化设计工具
+              暖通空调水系统水力平衡分析与优化设计工具
             </p>
           </div>
 
@@ -219,6 +219,8 @@ export default function HydraulicCalculatorPage() {
     </div>
   )
 }
+
+
 
 
 

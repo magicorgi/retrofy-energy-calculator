@@ -89,7 +89,7 @@ export default function HVACCalculatorPage() {
     {
       id: "hydraulic",
       title: "水力平衡系统优化计算器",
-      description: "HVAC水系统水力平衡分析与优化设计",
+      description: "水系统水力平衡分析与优化设计",
       icon: Settings,
       features: ["水力计算", "平衡阀选型", "系统优化", "能耗分析"],
       difficulty: "高级",
@@ -239,9 +239,9 @@ export default function HVACCalculatorPage() {
         <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">HVAC节能改造计算器</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">改造计算器</h1>
         <p className="text-gray-600 max-w-3xl mx-auto">
-          专业的HVAC系统节能改造计算工具，涵盖冷热源、输配系统等各个环节，
+          专业的暖通空调系统节能改造计算工具，涵盖冷热源、输配系统等各个环节，
           帮助您评估改造效果和投资回报
         </p>
       </div>
@@ -266,10 +266,10 @@ export default function HVACCalculatorPage() {
         </div>
       </div>
 
-      {/* All HVAC Calculators */}
+      {/* All 暖通空调 Calculators */}
       <section>
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">所有HVAC节能改造计算器</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">所有暖通空调节能改造计算器</h2>
           <p className="text-gray-600">
             涵盖冷热源、输配系统、末端使用等各个环节的专业计算工具
           </p>
@@ -320,17 +320,17 @@ export default function HVACCalculatorPage() {
         <CardContent className="p-8 text-center">
           <h3 className="text-xl font-semibold mb-4">需要专业指导？</h3>
           <p className="text-gray-600 mb-6">
-            我们的HVAC专家团队可以为您提供个性化的改造方案咨询
+            我们的暖通空调专家团队可以为您提供个性化的改造方案咨询
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button variant="outline" asChild>
               <Link href="/cases?category=hvac">
-                查看HVAC案例
+                查看暖通空调案例
               </Link>
             </Button>
             <Button asChild>
               <Link href="/appointment?service=hvac">
-                预约HVAC专家
+                预约暖通空调专家
               </Link>
             </Button>
           </div>
