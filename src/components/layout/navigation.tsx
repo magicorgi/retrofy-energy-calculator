@@ -32,7 +32,7 @@ export function Navigation() {
 
   const navItems = [
     { href: "/calculator", label: "节能计算器", icon: Calculator, public: true },
-    { href: "/demand-collection", label: "需求收集", icon: ClipboardList, public: true },
+    { href: "/demand-collection", label: "需求收集", icon: ClipboardList, adminOnly: true },
     { href: "/ecomatch", label: "EcoMatch", icon: Target, superAdminOnly: true },
     { href: "/project-assistant", label: "改造项目助手", icon: Wrench, superAdminOnly: true },
     { href: "/products", label: "产品推荐", icon: Package, public: true },
@@ -41,9 +41,9 @@ export function Navigation() {
     { href: "/feedback", label: "用户反馈", icon: MessageSquare, public: true },
   ]
 
-  // 过滤导航项目，只显示公开的或超级管理员可见的
+  // 过滤导航项目，只显示公开的、管理员可见的或超级管理员可见的
   const visibleNavItems = navItems.filter(item => 
-    item.public || (item.superAdminOnly && isSuperAdmin)
+    item.public || (item.adminOnly && isAdmin) || (item.superAdminOnly && isSuperAdmin)
   )
 
   return (
@@ -71,6 +71,9 @@ export function Navigation() {
               >
                 <item.icon className="w-4 h-4" />
                 <span>{item.label}</span>
+                {item.adminOnly && isAdmin && (
+                  <Badge variant="secondary" className="text-[9px] ml-1">Admin</Badge>
+                )}
                 {item.superAdminOnly && isSuperAdmin && (
                   <Badge variant="secondary" className="text-[9px] ml-1">Admin</Badge>
                 )}
@@ -165,6 +168,9 @@ export function Navigation() {
                 >
                   <item.icon className="w-4 h-4" />
                   <span>{item.label}</span>
+                  {item.adminOnly && isAdmin && (
+                    <Badge variant="secondary" className="text-[9px] ml-1">Admin</Badge>
+                  )}
                   {item.superAdminOnly && isSuperAdmin && (
                     <Badge variant="secondary" className="text-[9px] ml-1">Admin</Badge>
                   )}

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -17,10 +17,17 @@ import {
   CheckCircle,
   Target,
   Users,
-  MapPin
+  MapPin,
+  Lock,
+  AlertCircle
 } from 'lucide-react';
+import { useAdmin } from '@/contexts/AdminContext';
+import { useAuth } from '@/contexts/AuthContext';
+import Link from 'next/link';
 
 export default function DemandCollectionPage() {
+  const { isAdmin, isLoading: adminLoading } = useAdmin();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     // 基本信息
@@ -92,6 +99,47 @@ export default function DemandCollectionPage() {
       [field]: value
     }));
   };
+
+  // 权限检查
+  if (authLoading || adminLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">加载中...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 非管理员访问限制
+  if (!isAuthenticated || !isAdmin) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Card className="max-w-md w-full mx-4">
+          <CardContent className="p-8 text-center">
+            <Lock className="w-16 h-16 mx-auto mb-4 text-red-500" />
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">访问受限</h2>
+            <p className="text-gray-600 mb-6">
+              需求收集功能仅对管理员开放，请先登录管理员账户
+            </p>
+            <div className="space-y-3">
+              <Button asChild className="w-full">
+                <Link href="/auth/login">
+                  管理员登录
+                </Link>
+              </Button>
+              <Button variant="outline" asChild className="w-full">
+                <Link href="/">
+                  返回首页
+                </Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const renderStepContent = () => {
     switch (currentStep) {
