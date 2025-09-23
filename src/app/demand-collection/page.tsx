@@ -66,6 +66,29 @@ export default function DemandCollectionPage() {
     hasPreheatReheat: false,
     usesHeatRecovery: false,
     
+    // 建筑专用信息
+    buildingNature: '',
+    buildingTypes: [],
+    buildingEnergySystems: [],
+    totalBuildingArea: '',
+    hvacArea: '',
+    completionYear: '',
+    aboveGroundFloors: '',
+    undergroundFloors: '',
+    buildingChillerType: '',
+    buildingChillerCapacity: '',
+    buildingSteamBoilerType: '',
+    buildingSteamBoilerCapacity: '',
+    buildingHotWaterBoilerType: '',
+    buildingHotWaterBoilerCapacity: '',
+    hotWaterSource: '',
+    hasIroningMachine: false,
+    hasPVSystem: false,
+    pvCapacity: '',
+    pvRoofArea: '',
+    hasEnergyStorage: false,
+    batteryCapacity: '',
+    
     // 能耗现状
     annualElectricityBill: '',
     annualGasBill: '',
@@ -86,6 +109,44 @@ export default function DemandCollectionPage() {
       coolingTowerElectric: '',
       pumpElectric: '',
       airCompressorElectric: ''
+    },
+    
+    // 建筑能耗数据
+    buildingEnergyConsumption: {
+      chillerElectric: '',
+      chillerGas: '',
+      chillerOil: '',
+      boilerGas: '',
+      boilerOil: '',
+      steamBoilerGas: '',
+      steamBoilerOil: '',
+      hotWaterBoilerGas: '',
+      hotWaterBoilerOil: '',
+      municipalSteam: '',
+      municipalHeat: ''
+    },
+    
+    // 能源费用数据
+    energyCosts: {
+      electricityUsage: '',
+      electricityPrice: '',
+      electricityCost: '',
+      gasUsage: '',
+      gasPrice: '',
+      gasCost: '',
+      oilUsage: '',
+      oilPrice: '',
+      oilCost: '',
+      municipalSteamUsage: '',
+      municipalSteamPrice: '',
+      municipalSteamCost: '',
+      municipalHeatUsage: '',
+      municipalHeatPrice: '',
+      municipalHeatCost: '',
+      waterUsage: '',
+      waterPrice: '',
+      waterCost: '',
+      totalEnergyCost: ''
     },
     
     // 改造需求
@@ -151,6 +212,26 @@ export default function DemandCollectionPage() {
       ...prev,
       energyConsumption: {
         ...prev.energyConsumption,
+        [field]: value
+      }
+    }));
+  };
+
+  const updateBuildingEnergyConsumption = (field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      buildingEnergyConsumption: {
+        ...prev.buildingEnergyConsumption,
+        [field]: value
+      }
+    }));
+  };
+
+  const updateEnergyCosts = (field: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      energyCosts: {
+        ...prev.energyCosts,
         [field]: value
       }
     }));
@@ -265,6 +346,19 @@ export default function DemandCollectionPage() {
                   <li>• 主要能耗系统分析</li>
                   <li>• 能耗设备详细规格</li>
                   <li>• 上年度能耗数据统计</li>
+                </ul>
+              </div>
+            )}
+            
+            {surveyType === 'building' && (
+              <div className="mt-6 p-4 bg-green-50 rounded-lg">
+                <h4 className="font-medium text-green-900 mb-2">建筑调研内容预览</h4>
+                <ul className="text-sm text-green-800 space-y-1">
+                  <li>• 建筑基本情况与业态分类</li>
+                  <li>• 建筑面积与竣工信息</li>
+                  <li>• 主要能耗设备形式</li>
+                  <li>• 能源费用与能耗数据</li>
+                  <li>• 光伏发电与储能系统</li>
                 </ul>
               </div>
             )}
@@ -534,10 +628,20 @@ export default function DemandCollectionPage() {
       case 2:
         return (
           <div className="space-y-8">
-            {/* 工厂基本情况标题 */}
+            {/* 根据调研类型显示不同标题 */}
             <div className="text-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">工厂基本情况</h3>
-              <p className="text-gray-600">请填写工厂的基本信息和行业分类</p>
+              {surveyType === 'factory' && (
+                <>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">工厂基本情况</h3>
+                  <p className="text-gray-600">请填写工厂的基本信息和行业分类</p>
+                </>
+              )}
+              {surveyType === 'building' && (
+                <>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">建筑基本情况</h3>
+                  <p className="text-gray-600">请填写建筑的基本信息和业态分类</p>
+                </>
+              )}
             </div>
 
             {/* 基本信息卡片 */}
@@ -556,7 +660,7 @@ export default function DemandCollectionPage() {
                     </label>
                     <textarea
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                      placeholder="请输入工厂详细地址"
+                      placeholder={surveyType === 'factory' ? "请输入工厂详细地址" : "请输入建筑详细地址"}
                       rows={2}
                       value={formData.detailedAddress}
                       onChange={(e) => updateField('detailedAddress', e.target.value)}
@@ -576,53 +680,116 @@ export default function DemandCollectionPage() {
                     />
                   </div>
                 </div>
+                
+                {surveyType === 'building' && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      建筑性质 *
+                    </label>
+                    <select
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                      value={formData.buildingNature}
+                      onChange={(e) => updateField('buildingNature', e.target.value)}
+                    >
+                      <option value="">请选择建筑性质</option>
+                      <option value="公共建筑">公共建筑</option>
+                      <option value="商业建筑">商业建筑</option>
+                      <option value="住宅建筑">住宅建筑</option>
+                      <option value="工业建筑">工业建筑</option>
+                      <option value="其他">其他</option>
+                    </select>
+                  </div>
+                )}
               </CardContent>
             </Card>
 
-            {/* 所属行业卡片 */}
+            {/* 所属行业/建筑业态卡片 */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Zap className="w-5 h-5" />
-                  1）所属行业（单选）
+                  {surveyType === 'factory' ? '1）所属行业（单选）' : '1）建筑业态（多选）'}
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-3">
-                  {[
-                    '食品饮料', '电子半导体', '制药生物制品', '烟草', 
-                    '金属冶炼/金属加工', '化工', '汽车工业', '机械加工'
-                  ].map((industry) => (
-                    <label key={industry} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="industry"
-                        value={industry}
-                        checked={formData.industry === industry}
-                        onChange={(e) => updateField('industry', e.target.value)}
-                        className="text-green-600 focus:ring-green-500"
-                      />
-                      <span className="text-sm text-gray-700">{industry}</span>
-                    </label>
-                  ))}
-                  <label className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="industry"
-                      value="其他"
-                      checked={formData.industry === '其他'}
-                      onChange={(e) => updateField('industry', e.target.value)}
-                      className="text-green-600 focus:ring-green-500"
-                    />
-                    <span className="text-sm text-gray-700">其他：</span>
-                    <input
-                      type="text"
-                      placeholder="请填写"
-                      className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
-                      value={formData.industry === '其他' ? formData.industry : ''}
-                      onChange={(e) => updateField('industry', `其他：${e.target.value}`)}
-                    />
-                  </label>
+                  {surveyType === 'factory' ? (
+                    // 工厂行业选项
+                    <>
+                      {[
+                        '食品饮料', '电子半导体', '制药生物制品', '烟草', 
+                        '金属冶炼/金属加工', '化工', '汽车工业', '机械加工'
+                      ].map((industry) => (
+                        <label key={industry} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                          <input
+                            type="radio"
+                            name="industry"
+                            value={industry}
+                            checked={formData.industry === industry}
+                            onChange={(e) => updateField('industry', e.target.value)}
+                            className="text-green-600 focus:ring-green-500"
+                          />
+                          <span className="text-sm text-gray-700">{industry}</span>
+                        </label>
+                      ))}
+                      <label className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="industry"
+                          value="其他"
+                          checked={formData.industry === '其他'}
+                          onChange={(e) => updateField('industry', e.target.value)}
+                          className="text-green-600 focus:ring-green-500"
+                        />
+                        <span className="text-sm text-gray-700">其他：</span>
+                        <input
+                          type="text"
+                          placeholder="请填写"
+                          className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-1 focus:ring-green-500"
+                          value={formData.industry === '其他' ? formData.industry : ''}
+                          onChange={(e) => updateField('industry', `其他：${e.target.value}`)}
+                        />
+                      </label>
+                    </>
+                  ) : (
+                    // 建筑业态选项
+                    <>
+                      {[
+                        '宾馆', '商业综合体', '写字楼', '医院', '学校'
+                      ].map((buildingType) => (
+                        <label key={buildingType} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.buildingTypes.includes(buildingType)}
+                            onChange={() => toggleArrayField('buildingTypes', buildingType)}
+                            className="text-green-600 focus:ring-green-500"
+                          />
+                          <span className="text-sm text-gray-700">{buildingType}</span>
+                        </label>
+                      ))}
+                      <label className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={formData.buildingTypes.some((item: string) => item.startsWith('其他：'))}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              const otherValue = prompt('请输入其他建筑业态：');
+                              if (otherValue) {
+                                toggleArrayField('buildingTypes', `其他：${otherValue}`);
+                              }
+                            } else {
+                              setFormData(prev => ({
+                                ...prev,
+                                buildingTypes: prev.buildingTypes.filter((item: string) => !item.startsWith('其他：'))
+                              }));
+                            }
+                          }}
+                          className="text-green-600 focus:ring-green-500"
+                        />
+                        <span className="text-sm text-gray-700">其他：</span>
+                      </label>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -637,34 +804,63 @@ export default function DemandCollectionPage() {
               </CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-2 gap-3">
-                  {[
-                    '冷冻站', '蒸汽锅炉', '热水锅炉', '市政蒸汽/市政热力',
-                    '循环冷却水', '洁净厂房', '空气压缩机'
-                  ].map((system) => (
-                    <label key={system} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={formData.mainEnergySystems.includes(system)}
-                        onChange={() => toggleArrayField('mainEnergySystems', system)}
-                        className="text-green-600 focus:ring-green-500"
-                      />
-                      <span className="text-sm text-gray-700">{system}</span>
-                    </label>
-                  ))}
+                  {surveyType === 'factory' ? (
+                    // 工厂能耗系统
+                    <>
+                      {[
+                        '冷冻站', '蒸汽锅炉', '热水锅炉', '市政蒸汽/市政热力',
+                        '循环冷却水', '洁净厂房', '空气压缩机'
+                      ].map((system) => (
+                        <label key={system} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.mainEnergySystems.includes(system)}
+                            onChange={() => toggleArrayField('mainEnergySystems', system)}
+                            className="text-green-600 focus:ring-green-500"
+                          />
+                          <span className="text-sm text-gray-700">{system}</span>
+                        </label>
+                      ))}
+                    </>
+                  ) : (
+                    // 建筑能耗系统
+                    <>
+                      {[
+                        '冷冻站', '蒸汽锅炉', '热水锅炉', '市政蒸汽',
+                        '市政热力', '集中式生活热水', '洗衣房'
+                      ].map((system) => (
+                        <label key={system} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={formData.buildingEnergySystems.includes(system)}
+                            onChange={() => toggleArrayField('buildingEnergySystems', system)}
+                            className="text-green-600 focus:ring-green-500"
+                          />
+                          <span className="text-sm text-gray-700">{system}</span>
+                        </label>
+                      ))}
+                    </>
+                  )}
                   <label className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={formData.mainEnergySystems.some((item: string) => item.startsWith('其他：'))}
+                      checked={
+                        surveyType === 'factory' 
+                          ? formData.mainEnergySystems.some((item: string) => item.startsWith('其他：'))
+                          : formData.buildingEnergySystems.some((item: string) => item.startsWith('其他：'))
+                      }
                       onChange={(e) => {
                         if (e.target.checked) {
                           const otherValue = prompt('请输入其他能耗系统：');
                           if (otherValue) {
-                            toggleArrayField('mainEnergySystems', `其他：${otherValue}`);
+                            const fieldName = surveyType === 'factory' ? 'mainEnergySystems' : 'buildingEnergySystems';
+                            toggleArrayField(fieldName, `其他：${otherValue}`);
                           }
                         } else {
+                          const fieldName = surveyType === 'factory' ? 'mainEnergySystems' : 'buildingEnergySystems';
                           setFormData(prev => ({
                             ...prev,
-                            mainEnergySystems: prev.mainEnergySystems.filter((item: string) => !item.startsWith('其他：'))
+                            [fieldName]: prev[fieldName].filter((item: string) => !item.startsWith('其他：'))
                           }));
                         }
                       }}
@@ -675,6 +871,110 @@ export default function DemandCollectionPage() {
                 </div>
               </CardContent>
             </Card>
+            
+            {/* 建筑专用信息卡片 */}
+            {surveyType === 'building' && (
+              <>
+                {/* 建筑面积卡片 */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Building className="w-5 h-5" />
+                      3）建筑面积
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          总建筑面积 *
+                        </label>
+                        <input
+                          type="number"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          placeholder="请输入总建筑面积"
+                          value={formData.totalBuildingArea}
+                          onChange={(e) => updateField('totalBuildingArea', e.target.value)}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">单位：m²</p>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          建筑空调采暖面积 *
+                        </label>
+                        <input
+                          type="number"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          placeholder="请输入空调采暖面积"
+                          value={formData.hvacArea}
+                          onChange={(e) => updateField('hvacArea', e.target.value)}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">单位：m²</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* 竣工年份卡片 */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Calendar className="w-5 h-5" />
+                      4）竣工年份
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          竣工年份 *
+                        </label>
+                        <input
+                          type="number"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          placeholder="如：2020"
+                          min="1900"
+                          max="2030"
+                          value={formData.completionYear}
+                          onChange={(e) => updateField('completionYear', e.target.value)}
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          地上层数 *
+                        </label>
+                        <input
+                          type="number"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          placeholder="如：20"
+                          min="0"
+                          value={formData.aboveGroundFloors}
+                          onChange={(e) => updateField('aboveGroundFloors', e.target.value)}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">层</p>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          地下层数
+                        </label>
+                        <input
+                          type="number"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                          placeholder="如：2"
+                          min="0"
+                          value={formData.undergroundFloors}
+                          onChange={(e) => updateField('undergroundFloors', e.target.value)}
+                        />
+                        <p className="text-xs text-gray-500 mt-1">层</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            )}
           </div>
         );
         
