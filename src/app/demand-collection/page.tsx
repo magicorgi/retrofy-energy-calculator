@@ -1146,30 +1146,52 @@ export default function DemandCollectionPage() {
 
         {/* 步骤指示器 */}
         <div className="mb-8">
+          <div className="text-center mb-4">
+            <p className="text-sm text-gray-500">
+              💡 点击下方步骤可快速跳转到对应内容
+            </p>
+          </div>
           <div className="flex items-center justify-between mb-4">
             {steps.map((step, index) => (
               <div key={step.id} className="flex items-center">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 ${
-                  currentStep >= step.id 
-                    ? 'bg-green-500 border-green-500 text-white' 
-                    : 'bg-white border-gray-300 text-gray-400'
-                }`}>
-                  {currentStep > step.id ? (
-                    <CheckCircle className="w-5 h-5" />
-                  ) : (
-                    <step.icon className="w-5 h-5" />
-                  )}
-                </div>
-                <div className="ml-3 hidden md:block">
-                  <div className={`text-sm font-medium ${
-                    currentStep >= step.id ? 'text-gray-900' : 'text-gray-500'
+                <div 
+                  className="flex items-center cursor-pointer hover:opacity-80 transition-all duration-200 rounded-lg p-2 -m-2 hover:bg-gray-50"
+                  onClick={() => setCurrentStep(step.id)}
+                  title={`点击跳转到：${step.title}`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setCurrentStep(step.id);
+                    }
+                  }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`跳转到步骤 ${step.id}：${step.title}`}
+                >
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all ${
+                    currentStep >= step.id 
+                      ? 'bg-green-500 border-green-500 text-white shadow-md' 
+                      : 'bg-white border-gray-300 text-gray-400 hover:border-green-300 hover:text-green-500'
                   }`}>
-                    {step.title}
+                    {currentStep > step.id ? (
+                      <CheckCircle className="w-5 h-5" />
+                    ) : (
+                      React.createElement(step.icon, { className: "w-5 h-5" })
+                    )}
                   </div>
-                  <div className="text-xs text-gray-500">{step.description}</div>
+                  <div className="ml-3 hidden md:block">
+                    <div className={`text-sm font-medium transition-colors ${
+                      currentStep >= step.id 
+                        ? 'text-gray-900' 
+                        : 'text-gray-500 hover:text-gray-700'
+                    }`}>
+                      {step.title}
+                    </div>
+                    <div className="text-xs text-gray-500">{step.description}</div>
+                  </div>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className={`w-12 h-0.5 mx-4 ${
+                  <div className={`w-12 h-0.5 mx-4 transition-colors ${
                     currentStep > step.id ? 'bg-green-500' : 'bg-gray-300'
                   }`} />
                 )}
