@@ -37,7 +37,6 @@ export default function DemandCollectionPage() {
     contactPhone: '',
     contactEmail: '',
     contactPosition: '',
-    contactLevel: '',
     region: '',
     city: '',
     detailedAddress: '',
@@ -303,104 +302,6 @@ export default function DemandCollectionPage() {
               </div>
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                详细地址 *
-              </label>
-              <textarea
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                placeholder="请输入工厂详细地址"
-                rows={2}
-                value={formData.detailedAddress}
-                onChange={(e) => updateField('detailedAddress', e.target.value)}
-              />
-            </div>
-            
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  联系人姓名 *
-                </label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  placeholder="请输入联系人姓名"
-                  value={formData.contactName}
-                  onChange={(e) => updateField('contactName', e.target.value)}
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  联系电话 *
-                </label>
-                <input
-                  type="tel"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  placeholder="请输入联系电话"
-                  value={formData.contactPhone}
-                  onChange={(e) => updateField('contactPhone', e.target.value)}
-                />
-              </div>
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  邮箱地址
-                </label>
-                <input
-                  type="email"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  placeholder="请输入邮箱地址"
-                  value={formData.contactEmail}
-                  onChange={(e) => updateField('contactEmail', e.target.value)}
-                />
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  职位 *
-                </label>
-                <select
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  value={formData.contactPosition}
-                  onChange={(e) => updateField('contactPosition', e.target.value)}
-                >
-                  <option value="">请选择职位</option>
-                  <option value="总经理">总经理</option>
-                  <option value="副总经理">副总经理</option>
-                  <option value="总工程师">总工程师</option>
-                  <option value="副总工程师">副总工程师</option>
-                  <option value="部门经理">部门经理</option>
-                  <option value="副部门经理">副部门经理</option>
-                  <option value="项目经理">项目经理</option>
-                  <option value="主管">主管</option>
-                  <option value="工程师">工程师</option>
-                  <option value="助理工程师">助理工程师</option>
-                  <option value="技术员">技术员</option>
-                  <option value="其他">其他</option>
-                </select>
-              </div>
-              
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  职级
-                </label>
-                <select
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                  value={formData.contactLevel}
-                  onChange={(e) => updateField('contactLevel', e.target.value)}
-                >
-                  <option value="">请选择职级</option>
-                  <option value="高级">高级</option>
-                  <option value="中级">中级</option>
-                  <option value="初级">初级</option>
-                  <option value="无">无</option>
-                </select>
-              </div>
-            </div>
-            
             <div className="grid md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -521,6 +422,109 @@ export default function DemandCollectionPage() {
                       <option value="齐齐哈尔">齐齐哈尔</option>
                     </>
                   )}
+                </select>
+              </div>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                详细地址 *
+              </label>
+              <textarea
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="请输入工厂详细地址"
+                rows={2}
+                value={formData.detailedAddress}
+                onChange={(e) => updateField('detailedAddress', e.target.value)}
+              />
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  联系人姓名 *
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="请输入联系人姓名"
+                  value={formData.contactName}
+                  onChange={(e) => updateField('contactName', e.target.value)}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  联系电话 *
+                </label>
+                <input
+                  type="tel"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="请输入联系电话"
+                  value={formData.contactPhone}
+                  onChange={(e) => updateField('contactPhone', e.target.value)}
+                />
+              </div>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  邮箱地址
+                </label>
+                <input
+                  type="email"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  placeholder="请输入邮箱地址"
+                  value={formData.contactEmail}
+                  onChange={(e) => updateField('contactEmail', e.target.value)}
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  职位 *
+                </label>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                  value={formData.contactPosition}
+                  onChange={(e) => updateField('contactPosition', e.target.value)}
+                >
+                  <option value="">请选择职位</option>
+                  <option value="总经理">总经理</option>
+                  <option value="副总经理">副总经理</option>
+                  <option value="总工程师">总工程师</option>
+                  <option value="副总工程师">副总工程师</option>
+                  <option value="技术总监">技术总监</option>
+                  <option value="运营总监">运营总监</option>
+                  <option value="生产总监">生产总监</option>
+                  <option value="厂务设施经理">厂务设施经理</option>
+                  <option value="设备管理经理">设备管理经理</option>
+                  <option value="能源管理经理">能源管理经理</option>
+                  <option value="工程部经理">工程部经理</option>
+                  <option value="技术部经理">技术部经理</option>
+                  <option value="设备部经理">设备部经理</option>
+                  <option value="维护部经理">维护部经理</option>
+                  <option value="项目经理">项目经理</option>
+                  <option value="项目主管">项目主管</option>
+                  <option value="设备主管">设备主管</option>
+                  <option value="维护主管">维护主管</option>
+                  <option value="电气工程师">电气工程师</option>
+                  <option value="机械工程师">机械工程师</option>
+                  <option value="暖通工程师">暖通工程师</option>
+                  <option value="给排水工程师">给排水工程师</option>
+                  <option value="动力工程师">动力工程师</option>
+                  <option value="自动化工程师">自动化工程师</option>
+                  <option value="安全工程师">安全工程师</option>
+                  <option value="环保工程师">环保工程师</option>
+                  <option value="助理工程师">助理工程师</option>
+                  <option value="技术员">技术员</option>
+                  <option value="设备管理员">设备管理员</option>
+                  <option value="维护技师">维护技师</option>
+                  <option value="电气技师">电气技师</option>
+                  <option value="机械技师">机械技师</option>
+                  <option value="操作员">操作员</option>
+                  <option value="其他">其他</option>
                 </select>
               </div>
             </div>
