@@ -1003,8 +1003,15 @@ export default function DemandCollectionPage() {
                       <label key={type} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
                         <input
                           type="checkbox"
-                          checked={formData.chillerType.includes(type)}
-                          onChange={() => toggleArrayField('chillerType', type)}
+                          checked={
+                            surveyType === 'factory' 
+                              ? formData.chillerType.includes(type)
+                              : formData.buildingChillerType.includes(type)
+                          }
+                          onChange={() => {
+                            const fieldName = surveyType === 'factory' ? 'chillerType' : 'buildingChillerType';
+                            toggleArrayField(fieldName, type);
+                          }}
                           className="text-green-600 focus:ring-green-500"
                         />
                         <span className="text-sm text-gray-700">{type}</span>
@@ -1023,8 +1030,11 @@ export default function DemandCollectionPage() {
                         type="number"
                         className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-green-500"
                         placeholder="请输入数值"
-                        value={formData.chillerCapacity}
-                        onChange={(e) => updateField('chillerCapacity', e.target.value)}
+                        value={surveyType === 'factory' ? formData.chillerCapacity : formData.buildingChillerCapacity}
+                        onChange={(e) => {
+                          const fieldName = surveyType === 'factory' ? 'chillerCapacity' : 'buildingChillerCapacity';
+                          updateField(fieldName, e.target.value);
+                        }}
                       />
                       <select className="px-3 py-2 border border-l-0 border-gray-300 rounded-r-md bg-gray-50">
                         <option>冷吨</option>
@@ -1033,33 +1043,35 @@ export default function DemandCollectionPage() {
                     </div>
                   </div>
                   
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      是否有热回收冷水机组
-                    </label>
-                    <div className="flex space-x-4">
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          name="hasHeatRecoveryChiller"
-                          checked={formData.hasHeatRecoveryChiller === true}
-                          onChange={() => updateField('hasHeatRecoveryChiller', true)}
-                          className="text-green-600 focus:ring-green-500"
-                        />
-                        <span className="text-sm text-gray-700">有</span>
+                  {surveyType === 'factory' && (
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        是否有热回收冷水机组
                       </label>
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          name="hasHeatRecoveryChiller"
-                          checked={formData.hasHeatRecoveryChiller === false}
-                          onChange={() => updateField('hasHeatRecoveryChiller', false)}
-                          className="text-green-600 focus:ring-green-500"
-                        />
-                        <span className="text-sm text-gray-700">无</span>
-                      </label>
+                      <div className="flex space-x-4">
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            name="hasHeatRecoveryChiller"
+                            checked={formData.hasHeatRecoveryChiller === true}
+                            onChange={() => updateField('hasHeatRecoveryChiller', true)}
+                            className="text-green-600 focus:ring-green-500"
+                          />
+                          <span className="text-sm text-gray-700">有</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            name="hasHeatRecoveryChiller"
+                            checked={formData.hasHeatRecoveryChiller === false}
+                            onChange={() => updateField('hasHeatRecoveryChiller', false)}
+                            className="text-green-600 focus:ring-green-500"
+                          />
+                          <span className="text-sm text-gray-700">无</span>
+                        </label>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -1338,6 +1350,76 @@ export default function DemandCollectionPage() {
                 )}
               </CardContent>
             </Card>
+            
+            {/* 建筑特有设备卡片 */}
+            {surveyType === 'building' && (
+              <>
+                {/* 集中式生活热水热源卡片 */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Zap className="w-5 h-5" />
+                      4）集中式生活热水热源
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-3">生活热水热源类型（多选）</label>
+                      <div className="grid md:grid-cols-2 gap-3">
+                        {['蒸汽', '热水'].map((source) => (
+                          <label key={source} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={formData.hotWaterSource.includes(source)}
+                              onChange={() => toggleArrayField('hotWaterSource', source)}
+                              className="text-green-600 focus:ring-green-500"
+                            />
+                            <span className="text-sm text-gray-700">{source}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* 洗衣房卡片 */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Building className="w-5 h-5" />
+                      5）洗衣房
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">有无大烫机</label>
+                      <div className="flex space-x-4">
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            name="hasIroningMachine"
+                            checked={formData.hasIroningMachine === true}
+                            onChange={() => updateField('hasIroningMachine', true)}
+                            className="text-green-600 focus:ring-green-500"
+                          />
+                          <span className="text-sm text-gray-700">有</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            name="hasIroningMachine"
+                            checked={formData.hasIroningMachine === false}
+                            onChange={() => updateField('hasIroningMachine', false)}
+                            className="text-green-600 focus:ring-green-500"
+                          />
+                          <span className="text-sm text-gray-700">无</span>
+                        </label>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            )}
           </div>
         );
         
@@ -1347,8 +1429,187 @@ export default function DemandCollectionPage() {
             {/* 能耗基本情况标题 */}
             <div className="text-center mb-6">
               <h3 className="text-xl font-semibold text-gray-900 mb-2">能耗基本情况</h3>
-              <p className="text-gray-600">请填写上一年度主要能耗系统的能耗量数据</p>
+              <p className="text-gray-600">
+                {surveyType === 'factory' 
+                  ? '请填写上一年度主要能耗系统的能耗量数据'
+                  : '请填写上一年度能源费用和能耗数据，以及光伏储能系统信息'
+                }
+              </p>
             </div>
+
+            {/* 建筑能源费用表格 */}
+            {surveyType === 'building' && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <DollarSign className="w-5 h-5" />
+                    1）上一年度能源费用
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse border border-gray-300">
+                      <thead>
+                        <tr className="bg-gray-50">
+                          <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-900">能源类型</th>
+                          <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-900">年用量</th>
+                          <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-900">单价</th>
+                          <th className="border border-gray-300 px-4 py-3 text-left text-sm font-medium text-gray-900">费用</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">电</td>
+                          <td className="border border-gray-300 px-4 py-3">
+                            <input
+                              type="number"
+                              className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+                              placeholder="年用量"
+                              value={formData.energyCosts.electricityUsage}
+                              onChange={(e) => updateEnergyCosts('electricityUsage', e.target.value)}
+                            />
+                          </td>
+                          <td className="border border-gray-300 px-4 py-3">
+                            <input
+                              type="number"
+                              className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+                              placeholder="单价"
+                              value={formData.energyCosts.electricityPrice}
+                              onChange={(e) => updateEnergyCosts('electricityPrice', e.target.value)}
+                            />
+                          </td>
+                          <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">自动计算</td>
+                        </tr>
+                        <tr>
+                          <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">天然气</td>
+                          <td className="border border-gray-300 px-4 py-3">
+                            <input
+                              type="number"
+                              className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+                              placeholder="年用量"
+                              value={formData.energyCosts.gasUsage}
+                              onChange={(e) => updateEnergyCosts('gasUsage', e.target.value)}
+                            />
+                          </td>
+                          <td className="border border-gray-300 px-4 py-3">
+                            <input
+                              type="number"
+                              className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+                              placeholder="单价"
+                              value={formData.energyCosts.gasPrice}
+                              onChange={(e) => updateEnergyCosts('gasPrice', e.target.value)}
+                            />
+                          </td>
+                          <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">自动计算</td>
+                        </tr>
+                        <tr>
+                          <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">燃油</td>
+                          <td className="border border-gray-300 px-4 py-3">
+                            <input
+                              type="number"
+                              className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+                              placeholder="年用量"
+                              value={formData.energyCosts.oilUsage}
+                              onChange={(e) => updateEnergyCosts('oilUsage', e.target.value)}
+                            />
+                          </td>
+                          <td className="border border-gray-300 px-4 py-3">
+                            <input
+                              type="number"
+                              className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+                              placeholder="单价"
+                              value={formData.energyCosts.oilPrice}
+                              onChange={(e) => updateEnergyCosts('oilPrice', e.target.value)}
+                            />
+                          </td>
+                          <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">自动计算</td>
+                        </tr>
+                        <tr>
+                          <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">市政蒸汽</td>
+                          <td className="border border-gray-300 px-4 py-3">
+                            <input
+                              type="number"
+                              className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+                              placeholder="年用量"
+                              value={formData.energyCosts.municipalSteamUsage}
+                              onChange={(e) => updateEnergyCosts('municipalSteamUsage', e.target.value)}
+                            />
+                          </td>
+                          <td className="border border-gray-300 px-4 py-3">
+                            <input
+                              type="number"
+                              className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+                              placeholder="单价"
+                              value={formData.energyCosts.municipalSteamPrice}
+                              onChange={(e) => updateEnergyCosts('municipalSteamPrice', e.target.value)}
+                            />
+                          </td>
+                          <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">自动计算</td>
+                        </tr>
+                        <tr>
+                          <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">市政热力</td>
+                          <td className="border border-gray-300 px-4 py-3">
+                            <input
+                              type="number"
+                              className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+                              placeholder="年用量"
+                              value={formData.energyCosts.municipalHeatUsage}
+                              onChange={(e) => updateEnergyCosts('municipalHeatUsage', e.target.value)}
+                            />
+                          </td>
+                          <td className="border border-gray-300 px-4 py-3">
+                            <input
+                              type="number"
+                              className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+                              placeholder="单价"
+                              value={formData.energyCosts.municipalHeatPrice}
+                              onChange={(e) => updateEnergyCosts('municipalHeatPrice', e.target.value)}
+                            />
+                          </td>
+                          <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">自动计算</td>
+                        </tr>
+                        <tr>
+                          <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">水</td>
+                          <td className="border border-gray-300 px-4 py-3">
+                            <input
+                              type="number"
+                              className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+                              placeholder="年用量"
+                              value={formData.energyCosts.waterUsage}
+                              onChange={(e) => updateEnergyCosts('waterUsage', e.target.value)}
+                            />
+                          </td>
+                          <td className="border border-gray-300 px-4 py-3">
+                            <input
+                              type="number"
+                              className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+                              placeholder="单价"
+                              value={formData.energyCosts.waterPrice}
+                              onChange={(e) => updateEnergyCosts('waterPrice', e.target.value)}
+                            />
+                          </td>
+                          <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">自动计算</td>
+                        </tr>
+                        <tr className="bg-green-50">
+                          <td className="border border-gray-300 px-4 py-3 text-sm font-medium text-gray-900">总能源费用</td>
+                          <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">—</td>
+                          <td className="border border-gray-300 px-4 py-3 text-sm text-gray-700">—</td>
+                          <td className="border border-gray-300 px-4 py-3">
+                            <input
+                              type="number"
+                              className="w-full px-2 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-green-500"
+                              placeholder="总费用"
+                              value={formData.energyCosts.totalEnergyCost}
+                              onChange={(e) => updateEnergyCosts('totalEnergyCost', e.target.value)}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* 能耗数据表格卡片 */}
             <Card>
@@ -1566,6 +1827,143 @@ export default function DemandCollectionPage() {
                 </div>
               </CardContent>
             </Card>
+            
+            {/* 建筑光伏储能系统 */}
+            {surveyType === 'building' && (
+              <>
+                {/* 光伏发电系统卡片 */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Zap className="w-5 h-5" />
+                      3）光伏发电系统
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">有无光伏发电系统</label>
+                      <div className="flex space-x-4">
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            name="hasPVSystem"
+                            checked={formData.hasPVSystem === true}
+                            onChange={() => updateField('hasPVSystem', true)}
+                            className="text-green-600 focus:ring-green-500"
+                          />
+                          <span className="text-sm text-gray-700">有</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            name="hasPVSystem"
+                            checked={formData.hasPVSystem === false}
+                            onChange={() => updateField('hasPVSystem', false)}
+                            className="text-green-600 focus:ring-green-500"
+                          />
+                          <span className="text-sm text-gray-700">无</span>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    {formData.hasPVSystem && (
+                      <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+                        <div className="grid md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              装机容量 *
+                            </label>
+                            <div className="flex">
+                              <input
+                                type="number"
+                                className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                placeholder="请输入装机容量"
+                                value={formData.pvCapacity}
+                                onChange={(e) => updateField('pvCapacity', e.target.value)}
+                              />
+                              <span className="px-3 py-2 border border-l-0 border-gray-300 rounded-r-md bg-gray-50 text-sm">kW</span>
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              可安装光伏系统的屋面面积 *
+                            </label>
+                            <div className="flex">
+                              <input
+                                type="number"
+                                className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                                placeholder="请输入屋面面积"
+                                value={formData.pvRoofArea}
+                                onChange={(e) => updateField('pvRoofArea', e.target.value)}
+                              />
+                              <span className="px-3 py-2 border border-l-0 border-gray-300 rounded-r-md bg-gray-50 text-sm">m²</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* 储能电站卡片 */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Zap className="w-5 h-5" />
+                      4）储能电站
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">有无储能电站</label>
+                      <div className="flex space-x-4">
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            name="hasEnergyStorage"
+                            checked={formData.hasEnergyStorage === true}
+                            onChange={() => updateField('hasEnergyStorage', true)}
+                            className="text-green-600 focus:ring-green-500"
+                          />
+                          <span className="text-sm text-gray-700">有</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                          <input
+                            type="radio"
+                            name="hasEnergyStorage"
+                            checked={formData.hasEnergyStorage === false}
+                            onChange={() => updateField('hasEnergyStorage', false)}
+                            className="text-green-600 focus:ring-green-500"
+                          />
+                          <span className="text-sm text-gray-700">无</span>
+                        </label>
+                      </div>
+                    </div>
+                    
+                    {formData.hasEnergyStorage && (
+                      <div className="space-y-4 p-4 bg-gray-50 rounded-lg">
+                        <div>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            电池容量 *
+                          </label>
+                          <div className="flex">
+                            <input
+                              type="number"
+                              className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                              placeholder="请输入电池容量"
+                              value={formData.batteryCapacity}
+                              onChange={(e) => updateField('batteryCapacity', e.target.value)}
+                            />
+                            <span className="px-3 py-2 border border-l-0 border-gray-300 rounded-r-md bg-gray-50 text-sm">kWh</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </>
+            )}
           </div>
         );
         
