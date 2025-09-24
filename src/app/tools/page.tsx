@@ -20,16 +20,25 @@ import { useAdmin } from "@/contexts/AdminContext"
 
 export default function ToolsPage() {
   const [isLoading, setIsLoading] = useState(true)
-  const { isAuthenticated } = useAuth()
+  const [userPermissions, setUserPermissions] = useState<string[]>([])
+  const { isAuthenticated, user } = useAuth()
   const { isAdmin } = useAdmin()
 
   useEffect(() => {
     // 等待认证状态初始化
     const timer = setTimeout(() => {
       setIsLoading(false)
+      
+      // 模拟获取用户权限
+      if (user?.email === 'admin@danfoss.com.cn') {
+        setUserPermissions(['demand-collection', 'customer-visit', 'user-management'])
+      } else {
+        // 模拟普通用户权限
+        setUserPermissions(['demand-collection'])
+      }
     }, 100)
     return () => clearTimeout(timer)
-  }, [])
+  }, [user])
 
   // 如果正在加载，显示加载状态
   if (isLoading) {
@@ -76,8 +85,8 @@ export default function ToolsPage() {
     )
   }
 
-  // 如果不是管理员，显示权限不足提示
-  if (!isAdmin) {
+  // 如果没有任何工具权限，显示权限不足提示
+  if (userPermissions.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Card className="max-w-md w-full mx-4">
@@ -87,7 +96,7 @@ export default function ToolsPage() {
             </div>
             <CardTitle className="text-xl">权限不足</CardTitle>
             <CardDescription>
-              您没有权限访问小工具，请联系管理员
+              您没有权限访问任何小工具，请联系管理员
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -103,7 +112,7 @@ export default function ToolsPage() {
   }
 
   // 小工具列表
-  const tools = [
+  const allTools = [
     {
       id: "demand-collection",
       title: "需求收集工具",
@@ -140,6 +149,9 @@ export default function ToolsPage() {
       badge: "拜访工具"
     }
   ]
+
+  // 根据用户权限过滤工具
+  const tools = allTools.filter(tool => userPermissions.includes(tool.id))
 
   return (
     <div className="min-h-screen bg-gray-50">

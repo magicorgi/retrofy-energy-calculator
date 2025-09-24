@@ -1,688 +1,385 @@
-"use client";
+"use client"
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Users,
-  Search,
-  Filter,
-  Download,
-  UserPlus,
-  Edit,
-  Trash2,
-  Eye,
-  MoreHorizontal,
-  Calendar,
-  MapPin,
-  Building,
-  Phone,
-  Mail,
-  Activity,
-  TrendingUp,
-  BarChart3
-} from 'lucide-react';
-import { useAdmin } from '@/contexts/AdminContext';
-import { User, UserRole, USER_ROLE_LABELS, REGIONS, INDUSTRIES } from '@/types/user';
-import { UserBehavior, UserAnalytics, ADMIN_PERMISSIONS } from '@/types/admin';
+import { useState, useEffect } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Badge } from "@/components/ui/badge"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { 
+  Users, 
+  UserPlus, 
+  Mail, 
+  Shield, 
+  CheckCircle, 
+  XCircle, 
+  Clock,
+  Settings,
+  ClipboardList,
+  User
+} from "lucide-react"
 
-// 模拟用户数据
-const mockUsers: User[] = [
-  {
-    id: '1',
-    phone: '138****0001',
-    nickname: '张工程师',
-    real_name: '张明',
-    email: 'zhang.ming@example.com',
-    company: '北京某建筑设计院',
-    industry: '建筑设计',
-    region: '北京市',
-    role: 'designer',
-    position: '暖通工程师',
-    created_at: '2024-01-15T00:00:00Z',
-    updated_at: '2024-01-20T00:00:00Z',
-    last_login_at: '2024-01-20T10:30:00Z',
-    status: 'active',
-    verified: true
-  },
-  {
-    id: '2',
-    phone: '139****0002',
-    nickname: '李总',
-    real_name: '李建华',
-    email: 'li.jianhua@company.com',
-    company: '上海节能科技有限公司',
-    industry: '节能服务',
-    region: '上海市',
-    role: 'company',
-    position: '总经理',
-    created_at: '2024-01-10T00:00:00Z',
-    updated_at: '2024-01-19T00:00:00Z',
-    last_login_at: '2024-01-19T15:20:00Z',
-    status: 'active',
-    verified: true
-  },
-  {
-    id: '3',
-    phone: '137****0003',
-    nickname: '王供应商',
-    real_name: '王德华',
-    company: '广州热泵设备制造有限公司',
-    industry: '设备制造',
-    region: '广东省',
-    role: 'supplier',
-    position: '销售经理',
-    created_at: '2024-01-08T00:00:00Z',
-    updated_at: '2024-01-18T00:00:00Z',
-    last_login_at: '2024-01-18T09:45:00Z',
-    status: 'active',
-    verified: true
-  }
-];
+interface User {
+  id: string
+  email: string
+  name: string
+  role: string
+  permissions: string[]
+  status: 'active' | 'pending' | 'inactive'
+  createdAt: string
+  lastLogin?: string
+}
 
-const mockUserAnalytics: UserAnalytics[] = [
-  {
-    user_id: '1',
-    total_logins: 45,
-    total_calculations: 128,
-    total_contacts: 12,
-    total_appointments: 3,
-    last_active: '2024-01-20T10:30:00Z',
-    preferred_calculators: ['heat_pump', 'chiller'],
-    conversion_rate: 15.6,
-    engagement_score: 85
-  },
-  {
-    user_id: '2',
-    total_logins: 32,
-    total_calculations: 89,
-    total_contacts: 18,
-    total_appointments: 5,
-    last_active: '2024-01-19T15:20:00Z',
-    preferred_calculators: ['industrial_heat_pump', 'distributed_energy'],
-    conversion_rate: 22.4,
-    engagement_score: 92
-  }
-];
+interface InviteUser {
+  email: string
+  name: string
+  role: string
+  permissions: string[]
+  message: string
+}
 
 export default function UserManagementPage() {
-  const { hasPermission } = useAdmin();
-  const [users, setUsers] = useState<User[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
-  
-  // 筛选和搜索状态
-  const [searchTerm, setSearchTerm] = useState('');
-  const [roleFilter, setRoleFilter] = useState<string>('all');
-  const [regionFilter, setRegionFilter] = useState<string>('all');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [industryFilter, setIndustryFilter] = useState<string>('all');
+  const [users, setUsers] = useState<User[]>([])
+  const [inviteForm, setInviteForm] = useState<InviteUser>({
+    email: '',
+    name: '',
+    role: 'user',
+    permissions: [],
+    message: ''
+  })
+  const [isInviting, setIsInviting] = useState(false)
+  const [inviteSuccess, setInviteSuccess] = useState(false)
+  const [inviteError, setInviteError] = useState('')
 
-  // 分页状态
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  // 模拟用户数据
+  useEffect(() => {
+    const mockUsers: User[] = [
+      {
+        id: '1',
+        email: 'admin@danfoss.com.cn',
+        name: '系统管理员',
+        role: 'admin',
+        permissions: ['demand-collection', 'customer-visit', 'user-management'],
+        status: 'active',
+        createdAt: '2024-01-01',
+        lastLogin: '2024-01-15'
+      },
+      {
+        id: '2',
+        email: 'user1@company.com',
+        name: '张三',
+        role: 'user',
+        permissions: ['demand-collection'],
+        status: 'active',
+        createdAt: '2024-01-10',
+        lastLogin: '2024-01-14'
+      },
+      {
+        id: '3',
+        email: 'user2@company.com',
+        name: '李四',
+        role: 'user',
+        permissions: ['customer-visit'],
+        status: 'pending',
+        createdAt: '2024-01-12'
+      }
+    ]
+    setUsers(mockUsers)
+  }, [])
 
-  // 加载用户数据
-  const loadUsers = async () => {
-    setIsLoading(true);
+  const availablePermissions = [
+    { id: 'demand-collection', name: '需求收集工具', description: '访问工厂和建筑调研工具' },
+    { id: 'customer-visit', name: '客户拜访工具', description: '访问客户拜访记录工具' },
+    { id: 'user-management', name: '用户管理', description: '管理用户账号和权限' }
+  ]
+
+  const roleOptions = [
+    { value: 'user', label: '普通用户', description: '基础功能访问' },
+    { value: 'admin', label: '管理员', description: '完整功能访问' },
+    { value: 'super-admin', label: '超级管理员', description: '系统管理权限' }
+  ]
+
+  const handleInviteUser = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsInviting(true)
+    setInviteError('')
+    setInviteSuccess(false)
+
     try {
       // 模拟API调用
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setUsers(mockUsers);
-      setFilteredUsers(mockUsers);
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      
+      // 生成临时密码
+      const tempPassword = Math.random().toString(36).slice(-8)
+      
+      // 模拟发送邮件
+      console.log('发送邀请邮件:', {
+        email: inviteForm.email,
+        name: inviteForm.name,
+        role: inviteForm.role,
+        permissions: inviteForm.permissions,
+        tempPassword,
+        message: inviteForm.message
+      })
+
+      // 添加到用户列表
+      const newUser: User = {
+        id: Date.now().toString(),
+        email: inviteForm.email,
+        name: inviteForm.name,
+        role: inviteForm.role,
+        permissions: inviteForm.permissions,
+        status: 'pending',
+        createdAt: new Date().toISOString().split('T')[0]
+      }
+      
+      setUsers(prev => [...prev, newUser])
+      
+      // 重置表单
+      setInviteForm({
+        email: '',
+        name: '',
+        role: 'user',
+        permissions: [],
+        message: ''
+      })
+      
+      setInviteSuccess(true)
+      
+      // 显示成功消息
+      alert(`邀请邮件已发送到 ${inviteForm.email}\n临时密码: ${tempPassword}`)
+      
     } catch (error) {
-      console.error('Load users error:', error);
+      setInviteError('发送邀请失败，请重试')
     } finally {
-      setIsLoading(false);
+      setIsInviting(false)
     }
-  };
+  }
 
-  useEffect(() => {
-    loadUsers();
-  }, []);
+  const handlePermissionChange = (permissionId: string, checked: boolean) => {
+    setInviteForm(prev => ({
+      ...prev,
+      permissions: checked 
+        ? [...prev.permissions, permissionId]
+        : prev.permissions.filter(p => p !== permissionId)
+    }))
+  }
 
-  // 筛选用户
-  useEffect(() => {
-    let filtered = users;
-
-    // 搜索过滤
-    if (searchTerm) {
-      filtered = filtered.filter(user =>
-        user.nickname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.phone.includes(searchTerm) ||
-        user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.company?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // 角色过滤
-    if (roleFilter !== 'all') {
-      filtered = filtered.filter(user => user.role === roleFilter);
-    }
-
-    // 地区过滤
-    if (regionFilter !== 'all') {
-      filtered = filtered.filter(user => user.region === regionFilter);
-    }
-
-    // 状态过滤
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(user => user.status === statusFilter);
-    }
-
-    // 行业过滤
-    if (industryFilter !== 'all') {
-      filtered = filtered.filter(user => user.industry === industryFilter);
-    }
-
-    setFilteredUsers(filtered);
-    setCurrentPage(1); // 重置到第一页
-  }, [users, searchTerm, roleFilter, regionFilter, statusFilter, industryFilter]);
-
-  // 分页数据
-  const totalPages = Math.ceil(filteredUsers.length / pageSize);
-  const paginatedUsers = filteredUsers.slice(
-    (currentPage - 1) * pageSize,
-    currentPage * pageSize
-  );
-
-  const handleSelectUser = (userId: string) => {
-    setSelectedUsers(prev =>
-      prev.includes(userId)
-        ? prev.filter(id => id !== userId)
-        : [...prev, userId]
-    );
-  };
-
-  const handleSelectAll = () => {
-    if (selectedUsers.length === paginatedUsers.length) {
-      setSelectedUsers([]);
-    } else {
-      setSelectedUsers(paginatedUsers.map(user => user.id));
-    }
-  };
-
-  const handleBulkAction = (action: string) => {
-    console.log(`Bulk action: ${action} for users:`, selectedUsers);
-    // 实现批量操作逻辑
-    setSelectedUsers([]);
-  };
-
-  const handleExport = () => {
-    console.log('Export users:', filteredUsers);
-    // 实现导出逻辑
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('zh-CN');
-  };
-
-  const formatDateTime = (dateString: string) => {
-    return new Date(dateString).toLocaleString('zh-CN');
-  };
-
-  const getStatusColor = (status: string) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800';
-      case 'inactive': return 'bg-gray-100 text-gray-800';
-      case 'suspended': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'active':
+        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="w-3 h-3 mr-1" />活跃</Badge>
+      case 'pending':
+        return <Badge className="bg-yellow-100 text-yellow-800"><Clock className="w-3 h-3 mr-1" />待确认</Badge>
+      case 'inactive':
+        return <Badge className="bg-red-100 text-red-800"><XCircle className="w-3 h-3 mr-1" />未激活</Badge>
+      default:
+        return <Badge variant="secondary">{status}</Badge>
     }
-  };
+  }
 
-  const getStatusLabel = (status: string) => {
-    switch (status) {
-      case 'active': return '活跃';
-      case 'inactive': return '非活跃';
-      case 'suspended': return '已暂停';
-      default: return status;
+  const getRoleBadge = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return <Badge className="bg-blue-100 text-blue-800"><Shield className="w-3 h-3 mr-1" />管理员</Badge>
+      case 'super-admin':
+        return <Badge className="bg-purple-100 text-purple-800"><Settings className="w-3 h-3 mr-1" />超级管理员</Badge>
+      default:
+        return <Badge variant="secondary"><User className="w-3 h-3 mr-1" />普通用户</Badge>
     }
-  };
-
-  if (!hasPermission(ADMIN_PERMISSIONS.USER_VIEW)) {
-    return (
-      <div className="text-center py-12">
-        <Users className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-lg font-medium text-gray-900 mb-2">无访问权限</h3>
-        <p className="text-gray-600">您没有查看用户管理的权限</p>
-      </div>
-    );
   }
 
   return (
-    <div className="space-y-6">
-      {/* 页面标题和操作 */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">用户管理</h1>
-          <p className="text-gray-600 mt-1">
-            共 {filteredUsers.length} 个用户
-            {selectedUsers.length > 0 && ` (已选择 ${selectedUsers.length} 个)`}
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={handleExport}>
-            <Download className="w-4 h-4 mr-2" />
-            导出数据
-          </Button>
-          {hasPermission(ADMIN_PERMISSIONS.USER_CREATE) && (
-            <Button>
-              <UserPlus className="w-4 h-4 mr-2" />
-              添加用户
-            </Button>
-          )}
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto px-4 py-8">
+        <div className="space-y-8">
+          {/* 页面标题 */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">用户管理</h1>
+              <p className="text-gray-600 mt-2">管理用户账号、权限和邀请新用户</p>
+            </div>
+          </div>
 
-      <Tabs defaultValue="list" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="list">用户列表</TabsTrigger>
-          <TabsTrigger value="analytics">用户分析</TabsTrigger>
-          <TabsTrigger value="behavior">行为分析</TabsTrigger>
-        </TabsList>
-
-        {/* 用户列表 */}
-        <TabsContent value="list" className="space-y-6">
-          {/* 筛选和搜索 */}
-          <Card>
-            <CardContent className="p-4">
-              <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-                {/* 搜索 */}
-                <div className="md:col-span-2">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                    <Input
-                      placeholder="搜索用户..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-
-                {/* 角色筛选 */}
-                <div>
-                  <Select value={roleFilter} onValueChange={setRoleFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="角色" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">全部角色</SelectItem>
-                      {Object.entries(USER_ROLE_LABELS).map(([key, label]) => (
-                        <SelectItem key={key} value={key}>
-                          {label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* 地区筛选 */}
-                <div>
-                  <Select value={regionFilter} onValueChange={setRegionFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="地区" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">全部地区</SelectItem>
-                      {REGIONS.slice(0, 10).map((region) => (
-                        <SelectItem key={region} value={region}>
-                          {region}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* 行业筛选 */}
-                <div>
-                  <Select value={industryFilter} onValueChange={setIndustryFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="行业" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">全部行业</SelectItem>
-                      {INDUSTRIES.slice(0, 10).map((industry) => (
-                        <SelectItem key={industry} value={industry}>
-                          {industry}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* 状态筛选 */}
-                <div>
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="状态" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">全部状态</SelectItem>
-                      <SelectItem value="active">活跃</SelectItem>
-                      <SelectItem value="inactive">非活跃</SelectItem>
-                      <SelectItem value="suspended">已暂停</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* 批量操作 */}
-          {selectedUsers.length > 0 && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* 邀请用户表单 */}
             <Card>
-              <CardContent className="p-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">
-                    已选择 {selectedUsers.length} 个用户
-                  </span>
-                  <div className="flex gap-2">
-                    <Button size="sm" variant="outline" onClick={() => handleBulkAction('export')}>
-                      导出选中
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => handleBulkAction('disable')}>
-                      批量禁用
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => handleBulkAction('message')}>
-                      发送消息
-                    </Button>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <UserPlus className="w-5 h-5" />
+                  <span>邀请新用户</span>
+                </CardTitle>
+                <CardDescription>
+                  通过邮件邀请新用户加入系统
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleInviteUser} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="email">邮箱地址 *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={inviteForm.email}
+                        onChange={(e) => setInviteForm(prev => ({ ...prev, email: e.target.value }))}
+                        placeholder="user@company.com"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="name">姓名 *</Label>
+                      <Input
+                        id="name"
+                        value={inviteForm.name}
+                        onChange={(e) => setInviteForm(prev => ({ ...prev, name: e.target.value }))}
+                        placeholder="张三"
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
 
-          {/* 用户表格 */}
-          <Card>
-            <CardContent className="p-0">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="text-left py-3 px-4">
-                        <input
-                          type="checkbox"
-                          checked={selectedUsers.length === paginatedUsers.length && paginatedUsers.length > 0}
-                          onChange={handleSelectAll}
-                          className="rounded border-gray-300"
-                        />
-                      </th>
-                      <th className="text-left py-3 px-4">用户信息</th>
-                      <th className="text-left py-3 px-4">角色</th>
-                      <th className="text-left py-3 px-4">公司/行业</th>
-                      <th className="text-left py-3 px-4">地区</th>
-                      <th className="text-left py-3 px-4">状态</th>
-                      <th className="text-left py-3 px-4">注册时间</th>
-                      <th className="text-left py-3 px-4">最后登录</th>
-                      <th className="text-left py-3 px-4">操作</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {paginatedUsers.map((user) => (
-                      <tr key={user.id} className="border-b hover:bg-gray-50">
-                        <td className="py-3 px-4">
+                  <div>
+                    <Label htmlFor="role">用户角色</Label>
+                    <Select
+                      value={inviteForm.role}
+                      onValueChange={(value) => setInviteForm(prev => ({ ...prev, role: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {roleOptions.map((role) => (
+                          <SelectItem key={role.value} value={role.value}>
+                            <div>
+                              <div className="font-medium">{role.label}</div>
+                              <div className="text-sm text-gray-500">{role.description}</div>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div>
+                    <Label>权限设置</Label>
+                    <div className="space-y-2 mt-2">
+                      {availablePermissions.map((permission) => (
+                        <div key={permission.id} className="flex items-center space-x-2">
                           <input
                             type="checkbox"
-                            checked={selectedUsers.includes(user.id)}
-                            onChange={() => handleSelectUser(user.id)}
+                            id={permission.id}
+                            checked={inviteForm.permissions.includes(permission.id)}
+                            onChange={(e) => handlePermissionChange(permission.id, e.target.checked)}
                             className="rounded border-gray-300"
                           />
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium">
-                              {user.nickname.charAt(0)}
-                            </div>
-                            <div>
-                              <div className="font-medium flex items-center gap-2">
-                                {user.nickname}
-                                {user.verified && (
-                                  <Badge variant="outline" className="text-xs text-green-600">
-                                    已验证
-                                  </Badge>
-                                )}
-                              </div>
-                              <div className="text-gray-500 text-xs flex items-center gap-2">
-                                <Phone className="w-3 h-3" />
-                                {user.phone}
-                              </div>
-                              {user.email && (
-                                <div className="text-gray-500 text-xs flex items-center gap-2">
-                                  <Mail className="w-3 h-3" />
-                                  {user.email}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4">
-                          <Badge variant="secondary">
-                            {USER_ROLE_LABELS[user.role]}
-                          </Badge>
-                        </td>
-                        <td className="py-3 px-4">
-                          <div>
-                            {user.company && (
-                              <div className="font-medium text-xs flex items-center gap-1">
-                                <Building className="w-3 h-3" />
-                                {user.company}
-                              </div>
-                            )}
-                            <div className="text-gray-500 text-xs">{user.industry}</div>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex items-center gap-1 text-xs">
-                            <MapPin className="w-3 h-3" />
-                            {user.region}
-                          </div>
-                        </td>
-                        <td className="py-3 px-4">
-                          <Badge className={getStatusColor(user.status)}>
-                            {getStatusLabel(user.status)}
-                          </Badge>
-                        </td>
-                        <td className="py-3 px-4 text-xs text-gray-500">
-                          {formatDate(user.created_at)}
-                        </td>
-                        <td className="py-3 px-4 text-xs text-gray-500">
-                          {user.last_login_at ? formatDateTime(user.last_login_at) : '从未登录'}
-                        </td>
-                        <td className="py-3 px-4">
-                          <div className="flex gap-1">
-                            <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            {hasPermission(ADMIN_PERMISSIONS.USER_UPDATE) && (
-                              <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
-                                <Edit className="w-4 h-4" />
-                              </Button>
-                            )}
-                            <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
-                              <MoreHorizontal className="w-4 h-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* 分页 */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-between px-4 py-3 border-t">
-                  <div className="text-sm text-gray-600">
-                    显示 {(currentPage - 1) * pageSize + 1} 到 {Math.min(currentPage * pageSize, filteredUsers.length)} 条，
-                    共 {filteredUsers.length} 条记录
+                          <label htmlFor={permission.id} className="text-sm">
+                            <div className="font-medium">{permission.name}</div>
+                            <div className="text-gray-500">{permission.description}</div>
+                          </label>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={currentPage === 1}
-                      onClick={() => setCurrentPage(prev => prev - 1)}
-                    >
-                      上一页
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={currentPage === totalPages}
-                      onClick={() => setCurrentPage(prev => prev + 1)}
-                    >
-                      下一页
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
 
-        {/* 用户分析 */}
-        <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm text-gray-600">总用户数</p>
-                    <p className="text-2xl font-bold text-gray-900">{users.length}</p>
+                    <Label htmlFor="message">邀请消息（可选）</Label>
+                    <Textarea
+                      id="message"
+                      value={inviteForm.message}
+                      onChange={(e) => setInviteForm(prev => ({ ...prev, message: e.target.value }))}
+                      placeholder="欢迎加入我们的团队！"
+                      rows={3}
+                    />
                   </div>
-                  <Users className="w-8 h-8 text-blue-500" />
-                </div>
+
+                  {inviteSuccess && (
+                    <Alert>
+                      <CheckCircle className="h-4 w-4" />
+                      <AlertDescription>
+                        邀请邮件已发送成功！用户将收到包含登录信息的邮件。
+                      </AlertDescription>
+                    </Alert>
+                  )}
+
+                  {inviteError && (
+                    <Alert variant="destructive">
+                      <XCircle className="h-4 w-4" />
+                      <AlertDescription>{inviteError}</AlertDescription>
+                    </Alert>
+                  )}
+
+                  <Button 
+                    type="submit" 
+                    className="w-full bg-green-600 hover:bg-green-700"
+                    disabled={isInviting}
+                  >
+                    {isInviting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        发送中...
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="w-4 h-4 mr-2" />
+                        发送邀请邮件
+                      </>
+                    )}
+                  </Button>
+                </form>
               </CardContent>
             </Card>
 
+            {/* 用户列表 */}
             <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">活跃用户</p>
-                    <p className="text-2xl font-bold text-green-600">
-                      {users.filter(u => u.status === 'active').length}
-                    </p>
-                  </div>
-                  <Activity className="w-8 h-8 text-green-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">企业用户</p>
-                    <p className="text-2xl font-bold text-purple-600">
-                      {users.filter(u => u.role === 'company').length}
-                    </p>
-                  </div>
-                  <Building className="w-8 h-8 text-purple-500" />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-gray-600">验证用户</p>
-                    <p className="text-2xl font-bold text-orange-600">
-                      {users.filter(u => u.verified).length}
-                    </p>
-                  </div>
-                  <TrendingUp className="w-8 h-8 text-orange-500" />
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Users className="w-5 h-5" />
+                  <span>用户列表</span>
+                </CardTitle>
+                <CardDescription>
+                  当前系统中的所有用户
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {users.map((user) => (
+                    <div key={user.id} className="border rounded-lg p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <h4 className="font-medium">{user.name}</h4>
+                            {getRoleBadge(user.role)}
+                            {getStatusBadge(user.status)}
+                          </div>
+                          <p className="text-sm text-gray-600 mb-2">{user.email}</p>
+                          <div className="flex flex-wrap gap-1">
+                            {user.permissions.map((permission) => {
+                              const perm = availablePermissions.find(p => p.id === permission)
+                              return perm ? (
+                                <Badge key={permission} variant="outline" className="text-xs">
+                                  {perm.name}
+                                </Badge>
+                              ) : null
+                            })}
+                          </div>
+                          <div className="text-xs text-gray-500 mt-2">
+                            创建时间: {user.createdAt}
+                            {user.lastLogin && ` | 最后登录: ${user.lastLogin}`}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </CardContent>
             </Card>
           </div>
-
-          {/* 用户分布图表 */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>用户角色分布</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {Object.entries(USER_ROLE_LABELS).map(([key, label]) => {
-                    const count = users.filter(u => u.role === key).length;
-                    const percentage = users.length > 0 ? (count / users.length * 100).toFixed(1) : 0;
-                    return (
-                      <div key={key} className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                          <span className="text-sm">{label}</span>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm font-medium">{count}</div>
-                          <div className="text-xs text-gray-500">{percentage}%</div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>地区分布</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {Array.from(new Set(users.map(u => u.region))).slice(0, 5).map((region) => {
-                    const count = users.filter(u => u.region === region).length;
-                    const percentage = users.length > 0 ? (count / users.length * 100).toFixed(1) : 0;
-                    return (
-                      <div key={region} className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                          <span className="text-sm">{region}</span>
-                        </div>
-                        <div className="text-right">
-                          <div className="text-sm font-medium">{count}</div>
-                          <div className="text-xs text-gray-500">{percentage}%</div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* 行为分析 */}
-        <TabsContent value="behavior" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="w-5 h-5" />
-                用户行为分析
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8">
-                <Activity className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">行为分析功能开发中</h3>
-                <p className="text-gray-600">用户行为追踪和分析功能即将上线</p>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+        </div>
+      </div>
     </div>
-  );
+  )
 }
-
-
-
-

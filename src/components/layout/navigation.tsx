@@ -33,7 +33,7 @@ export function Navigation() {
 
   const navItems = [
     { href: "/calculator", label: "改造计算器", icon: Calculator, public: true },
-    { href: "/tools", label: "小工具", icon: Settings, adminOnly: true },
+    { href: "/tools", label: "小工具", icon: Settings, toolsAccess: true },
     { href: "/ecomatch", label: "EcoMatch", icon: Target, superAdminOnly: true },
     { href: "/project-assistant", label: "改造项目助手", icon: Wrench, superAdminOnly: true },
     { href: "/products", label: "产品推荐", icon: Package, public: true },
@@ -42,9 +42,21 @@ export function Navigation() {
     { href: "/feedback", label: "用户反馈", icon: MessageSquare, public: true },
   ]
 
-  // 过滤导航项目，只显示公开的、管理员可见的或超级管理员可见的
+  // 检查用户是否有工具访问权限
+  const hasToolsAccess = () => {
+    if (!isAuthenticated) return false
+    // 模拟权限检查 - 实际应该从用户数据中获取
+    if (user?.email === 'admin@danfoss.com.cn') return true
+    // 其他用户根据实际权限检查
+    return true // 暂时允许所有登录用户访问
+  }
+
+  // 过滤导航项目，只显示公开的、管理员可见的、超级管理员可见的或工具有权限的
   const visibleNavItems = navItems.filter(item => 
-    item.public || (item.adminOnly && isAdmin) || (item.superAdminOnly && isSuperAdmin)
+    item.public || 
+    (item.adminOnly && isAdmin) || 
+    (item.superAdminOnly && isSuperAdmin) ||
+    (item.toolsAccess && hasToolsAccess())
   )
 
   return (
