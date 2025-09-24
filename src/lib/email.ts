@@ -32,21 +32,12 @@ export async function sendInvitationEmail(invitation: EmailInvitation): Promise<
       content: generateEmailContent(invitation)
     });
     
-    // 模拟邮件发送成功
+    // 模拟邮件发送成功（演示环境总是成功）
     // 在实际环境中，这里应该处理真实的邮件发送结果
-    const success = Math.random() > 0.1; // 90% 成功率
-    
-    if (success) {
-      return {
-        success: true,
-        message: `邀请邮件已成功发送至 ${invitation.email}`
-      };
-    } else {
-      return {
-        success: false,
-        message: '邮件发送失败，请稍后重试'
-      };
-    }
+    return {
+      success: true,
+      message: `邀请邮件已成功发送至 ${invitation.email}`
+    };
   } catch (error) {
     console.error('邮件发送错误:', error);
     return {
@@ -105,7 +96,7 @@ function generateEmailContent(invitation: EmailInvitation): string {
       <h3>🚀 开始使用</h3>
       <p>请点击下方按钮激活您的账号并设置新密码：</p>
       
-      <a href="${window.location.origin}/auth/confirm?email=${encodeURIComponent(invitation.email)}&token=${btoa(invitation.tempPassword)}" class="button">
+      <a href="https://retrofy-energy-calculator.vercel.app/auth/confirm?email=${encodeURIComponent(invitation.email)}&token=${btoa(invitation.tempPassword)}" class="button">
         激活账号
       </a>
       

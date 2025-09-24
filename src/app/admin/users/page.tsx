@@ -19,7 +19,9 @@ import {
   Clock,
   Settings,
   ClipboardList,
-  User
+  User,
+  Trash2,
+  Edit
 } from "lucide-react"
 import { sendInvitationEmail } from "@/lib/email"
 
@@ -55,41 +57,61 @@ export default function UserManagementPage() {
   const [inviteSuccess, setInviteSuccess] = useState(false)
   const [inviteError, setInviteError] = useState('')
 
-  // 模拟用户数据
+  // 加载用户数据
   useEffect(() => {
-    const mockUsers: User[] = [
-      {
-        id: '1',
-        email: 'admin@danfoss.com.cn',
-        name: '系统管理员',
-        role: 'admin',
-        permissions: ['demand-collection', 'customer-visit', 'user-management'],
-        status: 'active',
-        createdAt: '2024-01-01',
-        lastLogin: '2024-01-15'
-      },
-      {
-        id: '2',
-        email: 'user1@company.com',
-        name: '张三',
-        role: 'user',
-        permissions: ['demand-collection'],
-        status: 'active',
-        createdAt: '2024-01-10',
-        lastLogin: '2024-01-14'
-      },
-      {
-        id: '3',
-        email: 'user2@company.com',
-        name: '李四',
-        role: 'user',
-        permissions: ['customer-visit'],
-        status: 'pending',
-        createdAt: '2024-01-12'
-      }
-    ]
-    setUsers(mockUsers)
+    loadUsers()
   }, [])
+
+  const loadUsers = () => {
+    try {
+      const storedUsers = localStorage.getItem('adminUsers')
+      if (storedUsers) {
+        setUsers(JSON.parse(storedUsers))
+      } else {
+        // 初始化默认用户数据
+        const mockUsers: User[] = [
+          {
+            id: '1',
+            email: 'admin@danfoss.com.cn',
+            name: '系统管理员',
+            role: 'admin',
+            permissions: ['demand-collection', 'customer-visit', 'user-management'],
+            status: 'active',
+            createdAt: '2024-01-01',
+            lastLogin: '2024-01-15'
+          },
+          {
+            id: '2',
+            email: 'user1@company.com',
+            name: '张三',
+            role: 'user',
+            permissions: ['demand-collection'],
+            status: 'active',
+            createdAt: '2024-01-10',
+            lastLogin: '2024-01-14'
+          },
+          {
+            id: '3',
+            email: 'user2@company.com',
+            name: '李四',
+            role: 'user',
+            permissions: ['customer-visit'],
+            status: 'pending',
+            createdAt: '2024-01-12'
+          }
+        ]
+        setUsers(mockUsers)
+        localStorage.setItem('adminUsers', JSON.stringify(mockUsers))
+      }
+    } catch (error) {
+      console.error('加载用户数据失败:', error)
+    }
+  }
+
+  const saveUsers = (newUsers: User[]) => {
+    setUsers(newUsers)
+    localStorage.setItem('adminUsers', JSON.stringify(newUsers))
+  }
 
   const availablePermissions = [
     { id: 'demand-collection', name: '需求收集工具', description: '访问工厂和建筑调研工具' },
@@ -138,7 +160,8 @@ export default function UserManagementPage() {
         createdAt: new Date().toISOString().split('T')[0]
       }
       
-      setUsers(prev => [...prev, newUser])
+      const updatedUsers = [...users, newUser]
+      saveUsers(updatedUsers)
       
       // 重置表单
       setInviteForm({
@@ -169,6 +192,20 @@ export default function UserManagementPage() {
         ? [...prev.permissions, permissionId]
         : prev.permissions.filter(p => p !== permissionId)
     }))
+  }
+
+  const handleDeleteUser = (userId: string) => {
+    if (confirm('确定要删除这个用户吗？')) {
+      const updatedUsers = users.filter(user => user.id !== userId)
+      saveUsers(updatedUsers)
+    }
+  }
+
+  const handleUpdateUserStatus = (userId: string, newStatus: 'active' | 'pending' | 'inactive') => {
+    const updatedUsers = users.map(user => 
+      user.id === userId ? { ...user, status: newStatus } : user
+    )
+    saveUsers(updatedUsers)
   }
 
   const getStatusBadge = (status: string) => {
@@ -373,6 +410,25 @@ export default function UserManagementPage() {
                             创建时间: {user.createdAt}
                             {user.lastLogin && ` | 最后登录: ${user.lastLogin}`}
                           </div>
+                        </div>
+                        
+                        {/* 操作按钮 */}
+                        <div className="flex gap-2 ml-4">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleUpdateUserStatus(user.id, user.status === 'active' ? 'inactive' : 'active')}
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDeleteUser(user.id)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
                     </div>
