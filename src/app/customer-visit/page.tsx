@@ -242,7 +242,7 @@ export default function CustomerVisitPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       客户名称 *
@@ -270,7 +270,7 @@ export default function CustomerVisitPage() {
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       拜访日期 *
@@ -495,7 +495,7 @@ export default function CustomerVisitPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       丹佛斯用量 *
@@ -538,7 +538,7 @@ export default function CustomerVisitPage() {
                   </select>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       机型
@@ -565,7 +565,7 @@ export default function CustomerVisitPage() {
                     />
                   </div>
 
-                  <div>
+                  <div className="sm:col-span-2 lg:col-span-1">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       功率
                     </label>
@@ -822,8 +822,39 @@ export default function CustomerVisitPage() {
 
         {/* 步骤导航 */}
         <div className="mb-8">
-          {/* 步骤图标 */}
-          <div className="flex justify-center items-center mb-6">
+          {/* 移动端步骤图标 - 水平滚动 */}
+          <div className="block md:hidden mb-4">
+            <div className="flex overflow-x-auto pb-2 space-x-3">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex-shrink-0 flex flex-col items-center">
+                  <div
+                    className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-colors duration-200 cursor-pointer ${
+                      currentStep === step.id
+                        ? 'bg-green-500 border-green-500 text-white'
+                        : currentStep > step.id
+                        ? 'bg-green-100 border-green-500 text-green-500'
+                        : 'bg-white border-gray-300 text-gray-400'
+                    }`}
+                    onClick={() => setCurrentStep(step.id)}
+                  >
+                    {currentStep > step.id ? (
+                      <CheckCircle className="w-5 h-5" />
+                    ) : (
+                      React.createElement(step.icon, { className: "w-5 h-5" })
+                    )}
+                  </div>
+                  <p className={`text-xs font-medium mt-1 ${
+                    currentStep === step.id ? 'text-green-600' : 'text-gray-500'
+                  }`}>
+                    {step.title}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 桌面端步骤图标 */}
+          <div className="hidden md:flex justify-center items-center mb-6">
             {steps.map((step, index) => (
               <div key={step.id} className="flex items-center">
                 <div
@@ -850,28 +881,26 @@ export default function CustomerVisitPage() {
             ))}
           </div>
 
-          {/* 步骤标题和完成度 */}
-          <div className="grid grid-cols-6 gap-4 mb-4">
-            {steps.map((step) => (
-              <div key={step.id} className="text-center">
-                <p className={`text-sm font-medium ${
-                  currentStep === step.id ? 'text-green-600' : 'text-gray-500'
-                }`}>
-                  {step.title}
-                </p>
-                <p className="text-xs text-gray-400 mb-2">{step.description}</p>
-                {/* 完成度指示器 */}
-                <div className="w-full bg-gray-200 rounded-full h-1">
-                  <div 
-                    className="bg-green-500 h-1 rounded-full transition-all duration-300"
-                    style={{ width: `${getStepCompletionRate(step.id)}%` }}
-                  ></div>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  {getStepCompletionRate(step.id)}%
-                </p>
+          {/* 当前步骤信息 */}
+          <div className="text-center mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">
+              {steps[currentStep - 1]?.title}
+            </h3>
+            <p className="text-sm text-gray-600 mb-2">
+              {steps[currentStep - 1]?.description}
+            </p>
+            {/* 当前步骤完成度 */}
+            <div className="flex items-center justify-center space-x-2">
+              <div className="w-24 bg-gray-200 rounded-full h-2">
+                <div 
+                  className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${getStepCompletionRate(currentStep)}%` }}
+                ></div>
               </div>
-            ))}
+              <span className="text-sm text-gray-600">
+                {getStepCompletionRate(currentStep)}%
+              </span>
+            </div>
           </div>
           
           {/* 总体进度条 */}
@@ -879,39 +908,41 @@ export default function CustomerVisitPage() {
         </div>
 
         {/* 表单内容 */}
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto px-4 md:px-0">
           {renderStepContent()}
         </div>
 
         {/* 导航按钮 */}
-        <div className="max-w-4xl mx-auto mt-8 flex justify-between">
-          <Button
-            variant="outline"
-            onClick={handlePrevious}
-            disabled={currentStep === 1}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            上一步
-          </Button>
+        <div className="max-w-4xl mx-auto mt-8 px-4 md:px-0">
+          <div className="flex flex-col sm:flex-row justify-between gap-4">
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              disabled={currentStep === 1}
+              className="flex items-center justify-center gap-2 w-full sm:w-auto"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              上一步
+            </Button>
 
-          {currentStep === totalSteps ? (
-            <Button
-              onClick={handleSubmit}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
-            >
-              <CheckCircle className="w-4 h-4" />
-              完成记录
-            </Button>
-          ) : (
-            <Button
-              onClick={handleNext}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
-            >
-              下一步
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          )}
+            {currentStep === totalSteps ? (
+              <Button
+                onClick={handleSubmit}
+                className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 w-full sm:w-auto"
+              >
+                <CheckCircle className="w-4 h-4" />
+                完成记录
+              </Button>
+            ) : (
+              <Button
+                onClick={handleNext}
+                className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 w-full sm:w-auto"
+              >
+                下一步
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
         </div>
       </div>
     </div>

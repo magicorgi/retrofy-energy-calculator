@@ -53,13 +53,13 @@ export function Navigation() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* RetroPro Logo */}
-          <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-            <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <Home className="w-6 h-6 text-white" />
+          <Link href="/" className="flex items-center space-x-2 sm:space-x-3 hover:opacity-80 transition-opacity">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
+              <Home className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-lg text-gray-900">RetroPro</span>
-              <span className="text-xs text-gray-600 -mt-1">节改专家</span>
+              <span className="font-bold text-base sm:text-lg text-gray-900">RetroPro</span>
+              <span className="text-xs text-gray-600 -mt-1 hidden sm:block">节改专家</span>
             </div>
           </Link>
 

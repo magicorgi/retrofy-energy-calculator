@@ -281,7 +281,7 @@ export default function CasesPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* 筛选侧边栏 */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 order-2 lg:order-1">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -404,7 +404,7 @@ export default function CasesPage() {
           </div>
 
           {/* 案例列表 */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 order-1 lg:order-2">
             {/* 排序工具栏 */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div className="flex items-center gap-4">
@@ -476,7 +476,7 @@ export default function CasesPage() {
                           </div>
                           
                           {/* 关键指标 */}
-                          <div className="grid grid-cols-2 gap-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div className={`p-3 rounded-lg text-center ${getEnergySavingsColor(caseItem.energy_savings)}`}>
                               <div className="text-lg font-bold">+{caseItem.energy_savings}%</div>
                               <div className="text-xs">节能效果</div>

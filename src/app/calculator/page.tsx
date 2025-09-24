@@ -104,7 +104,7 @@ export default function CalculatorPage() {
       </div>
 
       {/* Features */}
-      <div className="grid md:grid-cols-4 gap-6 py-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-8">
         {features.map((feature, index) => (
           <div key={index} className="text-center">
             <div className="w-12 h-12 mx-auto mb-3 rounded-lg bg-green-100 flex items-center justify-center">
@@ -117,7 +117,7 @@ export default function CalculatorPage() {
       </div>
 
       {/* Calculator Categories */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {calculators.map((calculator) => (
           <Card key={calculator.id} className="relative overflow-hidden hover:shadow-lg transition-shadow duration-300">
             <div className={`absolute top-0 right-0 w-20 h-20 bg-gradient-to-br ${calculator.color} opacity-10 rounded-bl-full`} />

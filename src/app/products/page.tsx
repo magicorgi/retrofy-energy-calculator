@@ -364,7 +364,7 @@ export default function ProductsPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* 筛选侧边栏 */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 order-2 lg:order-1">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -484,7 +484,7 @@ export default function ProductsPage() {
           </div>
 
           {/* 产品列表 */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 order-1 lg:order-2">
             {/* 排序和对比工具栏 */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
               <div className="flex items-center gap-4">
@@ -562,7 +562,7 @@ export default function ProductsPage() {
             </div>
 
             {/* 产品网格 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {filteredProducts.map((product) => (
                 <ProductCard
                   key={product.id}
@@ -648,24 +648,24 @@ function ProductCard({ product, energySavings, isSelected, onToggleComparison, c
           </div>
 
           {/* 关键参数 */}
-          <div className="grid grid-cols-2 gap-3 text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             <div className="flex items-center gap-2">
-              <Thermometer className="w-4 h-4 text-blue-500" />
+              <Thermometer className="w-4 h-4 text-blue-500 flex-shrink-0" />
               <span className="text-gray-600">制冷量:</span>
               <span className="font-medium">{product.cooling_capacity} kW</span>
             </div>
             <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-green-500" />
+              <Zap className="w-4 h-4 text-green-500 flex-shrink-0" />
               <span className="text-gray-600">COP:</span>
               <span className="font-medium">{product.cop}</span>
             </div>
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-orange-500" />
+              <TrendingUp className="w-4 h-4 text-orange-500 flex-shrink-0" />
               <span className="text-gray-600">IPLV:</span>
               <span className="font-medium">{product.iplv}</span>
             </div>
             <div className="flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-purple-500" />
+              <DollarSign className="w-4 h-4 text-purple-500 flex-shrink-0" />
               <span className="text-gray-600">价格:</span>
               <span className="font-medium text-sm">
                 {formatPrice(product.price_min, product.price_max, product.price_unit)}
@@ -703,7 +703,7 @@ function ProductCard({ product, energySavings, isSelected, onToggleComparison, c
           )}
 
           {/* 操作按钮 */}
-          <div className="flex gap-2 pt-2">
+          <div className="flex flex-col sm:flex-row gap-2 pt-2">
             <Button
               variant="outline"
               size="sm"
