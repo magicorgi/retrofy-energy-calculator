@@ -251,3 +251,4 @@ const calculateEnergySavings = (product: Product) => {
 
 
 
+
