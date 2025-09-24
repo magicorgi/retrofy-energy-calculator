@@ -274,6 +274,12 @@ export default function ProductsPage() {
       );
     }
 
+    if (filters.power_range) {
+      filtered = filtered.filter(product => 
+        product.power_range.toLowerCase().includes(filters.power_range!.toLowerCase())
+      );
+    }
+
     // 排序
     filtered.sort((a, b) => {
       let aValue: any;
@@ -432,30 +438,19 @@ export default function ProductsPage() {
                   </Select>
                 </div>
 
-                {/* 制冷量范围 */}
+                {/* 功率范围 */}
                 <div>
-                  <Label>制冷量范围 (kW)</Label>
+                  <Label>功率范围</Label>
                   <div className="space-y-2">
-                    <div className="grid grid-cols-2 gap-2">
-                      <Input
-                        type="number"
-                        placeholder="最小值"
-                        value={filters.cooling_capacity_min || ''}
-                        onChange={(e) => setFilters(prev => ({ 
-                          ...prev, 
-                          cooling_capacity_min: e.target.value ? Number(e.target.value) : undefined 
-                        }))}
-                      />
-                      <Input
-                        type="number"
-                        placeholder="最大值"
-                        value={filters.cooling_capacity_max || ''}
-                        onChange={(e) => setFilters(prev => ({ 
-                          ...prev, 
-                          cooling_capacity_max: e.target.value ? Number(e.target.value) : undefined 
-                        }))}
-                      />
-                    </div>
+                    <Input
+                      type="text"
+                      placeholder="如：0.75-630kW"
+                      value={filters.power_range || ''}
+                      onChange={(e) => setFilters(prev => ({ 
+                        ...prev, 
+                        power_range: e.target.value || undefined 
+                      }))}
+                    />
                   </div>
                 </div>
 

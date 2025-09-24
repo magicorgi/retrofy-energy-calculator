@@ -14,127 +14,177 @@ import {
   Star,
   Building,
   Zap,
-  DollarSign,
-  Thermometer,
   TrendingUp,
   FileText,
   MapPin,
   Calendar,
-  Users
+  Users,
+  Package,
+  Globe
 } from 'lucide-react';
-import { Product, ProductCase } from '@/types/product';
+import { Product } from '@/types/product';
 import Link from 'next/link';
 
-// 模拟产品详情数据
+// 区域联系人配置
+const regionContacts = {
+  north: { name: '张经理', phone: '010-12345678', email: 'north@danfoss.com.cn' },
+  east: { name: '李经理', phone: '021-12345678', email: 'east@danfoss.com.cn' },
+  south: { name: '王经理', phone: '020-12345678', email: 'south@danfoss.com.cn' },
+  central: { name: '刘经理', phone: '027-12345678', email: 'central@danfoss.com.cn' },
+  southwest: { name: '陈经理', phone: '028-12345678', email: 'southwest@danfoss.com.cn' },
+  northeast: { name: '赵经理', phone: '024-12345678', email: 'northeast@danfoss.com.cn' },
+  northwest: { name: '孙经理', phone: '029-12345678', email: 'northwest@danfoss.com.cn' }
+};
+
+const regions = [
+  { value: 'north', label: '华北' },
+  { value: 'east', label: '华东' },
+  { value: 'south', label: '华南' },
+  { value: 'central', label: '华中' },
+  { value: 'southwest', label: '西南' },
+  { value: 'northeast', label: '东北' },
+  { value: 'northwest', label: '西北' }
+];
+
+const industries = [
+  { value: 'food_beverage', label: '食品饮料' },
+  { value: 'electronics', label: '电子半导体' },
+  { value: 'pharmaceutical', label: '制药生物制品' },
+  { value: 'tobacco', label: '烟草' },
+  { value: 'metallurgy', label: '金属冶炼/金属加工' },
+  { value: 'chemical', label: '化工' },
+  { value: 'automotive', label: '汽车工业' },
+  { value: 'machinery', label: '机械加工' },
+  { value: 'commercial_building', label: '商业建筑' },
+  { value: 'residential', label: '住宅' },
+  { value: 'hospital', label: '医院' },
+  { value: 'school', label: '学校' },
+  { value: 'other', label: '其他' }
+];
+
+const categories = [
+  { value: 'compressor', label: '压缩机' },
+  { value: 'frequency_converter', label: '变频器' },
+  { value: 'heat_exchanger', label: '换热器' },
+  { value: 'hydraulic_valve', label: '水力平衡阀' },
+  { value: 'sensor', label: '传感器' },
+  { value: 'control_system', label: '控制系统' },
+  { value: 'expansion_valve', label: '膨胀阀' },
+  { value: 'filter_drier', label: '过滤器干燥器' },
+  { value: 'other', label: '其他' }
+];
+
+// 模拟产品详情数据（使用新的数据结构）
 const mockProduct: Product = {
   id: '1',
-  brand: '格力',
-  model: 'GMV-H180WL/A',
-  cooling_capacity: 180,
-  heating_capacity: 200,
-  cop: 4.2,
-  iplv: 5.8,
-  price_min: 45000,
-  price_max: 52000,
-  price_unit: '元/kW',
-  images: ['/images/gree-chiller-1.jpg', '/images/gree-chiller-2.jpg'],
-  manual_url: 'https://example.com/manual1.pdf',
-  contact_person: '张工程师',
-  contact_phone: '138-0000-0001',
-  contact_email: 'zhang@gree.com',
-  company: '珠海格力电器股份有限公司',
-  description: 'GMV-H180WL/A是格力新一代高效节能冷水机组，采用先进的变频控制技术，具有出色的节能性能和稳定的运行表现。适用于各类商业建筑、办公楼、酒店等场所的中央空调系统。',
-  features: [
-    '全直流变频技术，节能效果显著',
-    '高效换热器设计，提升系统效率',
-    '智能除霜功能，确保低温运行',
-    '静音运行，噪音低于65dB(A)',
-    '远程监控功能，便于管理维护',
-    '环保制冷剂，符合环保要求'
-  ],
-  specifications: {
-    '制冷剂': 'R410A',
-    '电源': '380V/3Ph/50Hz',
-    '噪音': '≤65dB(A)',
-    '外形尺寸': '1800×800×2000mm',
-    '重量': '1200kg',
-    '工作温度': '-15°C ~ +45°C',
-    '出水温度': '7°C',
-    '回水温度': '12°C'
-  },
-  applicable_cities: ['北京', '上海', '广州', '深圳', '杭州', '南京'],
-  category: 'chiller',
-  energy_efficiency_grade: '一级',
-  refrigerant_type: 'R410A',
+  name: 'VLT® Flow Drive FC 111 变频器',
+  brand: '丹佛斯',
+  model: 'FC 111',
+  power_range: '0.75-630kW',
+  applicable_industries: ['food_beverage', 'electronics', 'commercial_building'],
+  images: ['/images/danfoss-fc111.jpg'],
+  contact_region: 'east',
+  contact_person: regionContacts.east.name,
+  contact_phone: regionContacts.east.phone,
+  contact_email: regionContacts.east.email,
+  company: '丹佛斯（中国）有限公司',
+  category: 'frequency_converter',
   created_at: '2024-01-15T00:00:00Z',
   updated_at: '2024-01-15T00:00:00Z',
   status: 'active',
   source: 'manual'
 };
 
-// 模拟关联案例数据
-const mockCases: ProductCase[] = [
-  {
-    id: '1',
-    product_id: '1',
-    title: '北京某商业综合体节能改造项目',
-    description: '该项目采用格力GMV-H180WL/A冷水机组，替换原有老旧设备，实现了显著的节能效果。',
-    location: '北京市朝阳区',
-    project_scale: '建筑面积: 50,000㎡',
-    energy_savings: 35.2,
-    investment_return: 4.2,
-    images: ['/images/case1-1.jpg', '/images/case1-2.jpg'],
-    created_at: '2024-01-10T00:00:00Z'
-  },
-  {
-    id: '2',
-    product_id: '1',
-    title: '上海某办公楼中央空调系统升级',
-    description: '办公楼中央空调系统全面升级，采用格力高效冷水机组，大幅降低运行成本。',
-    location: '上海市浦东新区',
-    project_scale: '建筑面积: 35,000㎡',
-    energy_savings: 28.6,
-    investment_return: 3.8,
-    images: ['/images/case2-1.jpg'],
-    created_at: '2024-01-05T00:00:00Z'
-  }
-];
-
 export default function ProductDetailPage() {
   const params = useParams();
   const [product, setProduct] = useState<Product | null>(null);
-  const [cases, setCases] = useState<ProductCase[]>([]);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // 这里应该根据ID从API获取产品详情
-    setProduct(mockProduct);
-    setCases(mockCases);
+    loadProduct();
   }, [params.id]);
 
-  if (!product) {
+  const loadProduct = async () => {
+    setIsLoading(true);
+    try {
+      // 从管理员管理的产品数据中查找
+      const adminProducts = localStorage.getItem('adminProducts');
+      if (adminProducts) {
+        const parsedProducts = JSON.parse(adminProducts);
+        const foundProduct = parsedProducts.find((p: Product) => p.id === params.id);
+        if (foundProduct) {
+          setProduct(foundProduct);
+        } else {
+          setProduct(mockProduct);
+        }
+      } else {
+        setProduct(mockProduct);
+      }
+    } catch (error) {
+      console.error('加载产品详情失败:', error);
+      setProduct(mockProduct);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const calculateEnergySavings = (product: Product) => {
+    // 根据产品类别返回不同的节能效果
+    const savingsMap = {
+      'frequency_converter': 25,
+      'compressor': 30,
+      'heat_exchanger': 20,
+      'hydraulic_valve': 15,
+      'sensor': 10,
+      'control_system': 35,
+      'expansion_valve': 18,
+      'filter_drier': 12,
+      'other': 20
+    };
+    return savingsMap[product.category] || 20;
+  };
+
+  const getRegionLabel = (region: string) => {
+    return regions.find(r => r.value === region)?.label || region;
+  };
+
+  const getIndustryLabel = (industry: string) => {
+    return industries.find(i => i.value === industry)?.label || industry;
+  };
+
+  const getCategoryLabel = (category: string) => {
+    return categories.find(c => c.value === category)?.label || category;
+  };
+
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-gray-600">加载中...</p>
         </div>
       </div>
     );
   }
 
-  const calculateEnergySavings = () => {
-    const baselineCOP = 3.0;
-    return ((product.cop - baselineCOP) / baselineCOP * 100);
-  };
+  if (!product) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Building className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">产品未找到</h2>
+          <p className="text-gray-600 mb-4">抱歉，您访问的产品不存在或已被删除。</p>
+          <Link href="/products">
+            <Button>返回产品列表</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
-  const formatPrice = () => {
-    if (product.price_min === product.price_max) {
-      return `${product.price_min.toLocaleString()} ${product.price_unit}`;
-    }
-    return `${product.price_min.toLocaleString()} - ${product.price_max.toLocaleString()} ${product.price_unit}`;
-  };
+  const energySavings = calculateEnergySavings(product);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -155,7 +205,7 @@ export default function ProductDetailPage() {
             <Card>
               <CardContent className="p-6">
                 <div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-                  <Building className="w-16 h-16 text-gray-400" />
+                  <Package className="w-16 h-16 text-gray-400" />
                 </div>
                 
                 {/* 图片缩略图 */}
@@ -164,11 +214,11 @@ export default function ProductDetailPage() {
                     <div
                       key={index}
                       className={`flex-shrink-0 w-20 h-20 bg-gray-100 rounded cursor-pointer ${
-                        index === activeImageIndex ? 'ring-2 ring-blue-500' : ''
+                        index === activeImageIndex ? 'ring-2 ring-green-500' : ''
                       }`}
                       onClick={() => setActiveImageIndex(index)}
                     >
-                      <Building className="w-full h-full text-gray-400" />
+                      <Package className="w-full h-full text-gray-400" />
                     </div>
                   ))}
                 </div>
@@ -183,41 +233,33 @@ export default function ProductDetailPage() {
               <CardHeader>
                 <div className="flex items-center gap-2 mb-2">
                   <Badge variant="secondary">{product.brand}</Badge>
-                  {product.energy_efficiency_grade && (
-                    <Badge variant="outline">{product.energy_efficiency_grade}级能效</Badge>
-                  )}
+                  <Badge variant="outline">{getCategoryLabel(product.category)}</Badge>
                 </div>
-                <CardTitle className="text-xl">{product.model}</CardTitle>
+                <CardTitle className="text-xl">{product.name}</CardTitle>
+                <p className="text-sm text-gray-600">{product.model}</p>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* 关键参数 */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="flex items-center gap-2">
-                    <Thermometer className="w-4 h-4 text-blue-500" />
-                    <div>
-                      <div className="text-xs text-gray-600">制冷量</div>
-                      <div className="font-medium">{product.cooling_capacity} kW</div>
-                    </div>
-                  </div>
+                <div className="grid grid-cols-1 gap-3">
                   <div className="flex items-center gap-2">
                     <Zap className="w-4 h-4 text-green-500" />
                     <div>
-                      <div className="text-xs text-gray-600">COP</div>
-                      <div className="font-medium">{product.cop}</div>
+                      <div className="text-xs text-gray-600">功率范围</div>
+                      <div className="font-medium">{product.power_range}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-orange-500" />
+                    <Globe className="w-4 h-4 text-blue-500" />
                     <div>
-                      <div className="text-xs text-gray-600">IPLV</div>
-                      <div className="font-medium">{product.iplv}</div>
+                      <div className="text-xs text-gray-600">联系区域</div>
+                      <div className="font-medium">{getRegionLabel(product.contact_region)}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <DollarSign className="w-4 h-4 text-purple-500" />
+                    <Users className="w-4 h-4 text-purple-500" />
                     <div>
-                      <div className="text-xs text-gray-600">价格</div>
-                      <div className="font-medium text-sm">{formatPrice()}</div>
+                      <div className="text-xs text-gray-600">联系人</div>
+                      <div className="font-medium">{product.contact_person}</div>
                     </div>
                   </div>
                 </div>
@@ -227,7 +269,7 @@ export default function ProductDetailPage() {
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-green-700">节能效果</span>
                     <span className="font-bold text-green-800">
-                      +{calculateEnergySavings().toFixed(1)}%
+                      +{energySavings}%
                     </span>
                   </div>
                 </div>
@@ -241,14 +283,6 @@ export default function ProductDetailPage() {
                     <Phone className="w-4 h-4 mr-2" />
                     联系厂商
                   </Button>
-                  {product.manual_url && (
-                    <Button variant="outline" className="w-full" asChild>
-                      <a href={product.manual_url} target="_blank" rel="noopener noreferrer">
-                        <Download className="w-4 h-4 mr-2" />
-                        下载技术手册
-                      </a>
-                    </Button>
-                  )}
                 </div>
 
                 {/* 联系信息 */}
@@ -274,20 +308,20 @@ export default function ProductDetailPage() {
               </CardContent>
             </Card>
 
-            {/* 适用城市 */}
-            {product.applicable_cities && product.applicable_cities.length > 0 && (
+            {/* 适用行业 */}
+            {product.applicable_industries && product.applicable_industries.length > 0 && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
-                    <MapPin className="w-5 h-5" />
-                    适用城市
+                    <Building className="w-5 h-5" />
+                    适用行业
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-wrap gap-2">
-                    {product.applicable_cities.map(city => (
-                      <Badge key={city} variant="outline">
-                        {city}
+                    {product.applicable_industries.map(industry => (
+                      <Badge key={industry} variant="outline">
+                        {getIndustryLabel(industry)}
                       </Badge>
                     ))}
                   </div>
@@ -300,11 +334,10 @@ export default function ProductDetailPage() {
         {/* 详细信息标签页 */}
         <div className="mt-8">
           <Tabs defaultValue="description" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="description">产品描述</TabsTrigger>
               <TabsTrigger value="specifications">技术规格</TabsTrigger>
               <TabsTrigger value="features">产品特点</TabsTrigger>
-              <TabsTrigger value="cases">关联案例</TabsTrigger>
             </TabsList>
 
             <TabsContent value="description" className="mt-6">
@@ -313,7 +346,32 @@ export default function ProductDetailPage() {
                   <CardTitle>产品描述</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-700 leading-relaxed">{product.description}</p>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-medium mb-2">产品名称</h4>
+                      <p className="text-gray-700">{product.name}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-2">品牌</h4>
+                      <p className="text-gray-700">{product.brand}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-2">型号</h4>
+                      <p className="text-gray-700">{product.model}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-2">功率范围</h4>
+                      <p className="text-gray-700">{product.power_range}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-2">产品类别</h4>
+                      <p className="text-gray-700">{getCategoryLabel(product.category)}</p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-2">公司信息</h4>
+                      <p className="text-gray-700">{product.company}</p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -325,12 +383,38 @@ export default function ProductDetailPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {Object.entries(product.specifications || {}).map(([key, value]) => (
-                      <div key={key} className="flex justify-between py-2 border-b border-gray-100">
-                        <span className="text-gray-600">{key}</span>
-                        <span className="font-medium">{String(value)}</span>
-                      </div>
-                    ))}
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">产品名称</span>
+                      <span className="font-medium">{product.name}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">品牌</span>
+                      <span className="font-medium">{product.brand}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">型号</span>
+                      <span className="font-medium">{product.model}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">功率范围</span>
+                      <span className="font-medium">{product.power_range}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">产品类别</span>
+                      <span className="font-medium">{getCategoryLabel(product.category)}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">状态</span>
+                      <span className="font-medium">{product.status === 'active' ? '活跃' : '非活跃'}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">数据来源</span>
+                      <span className="font-medium">{product.source === 'manual' ? '手动录入' : 'API导入'}</span>
+                    </div>
+                    <div className="flex justify-between py-2 border-b border-gray-100">
+                      <span className="text-gray-600">更新时间</span>
+                      <span className="font-medium">{new Date(product.updated_at).toLocaleDateString()}</span>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -343,62 +427,29 @@ export default function ProductDetailPage() {
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2">
-                    {product.features?.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <Star className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
-                        <span className="text-gray-700">{feature}</span>
-                      </li>
-                    ))}
+                    <li className="flex items-start gap-2">
+                      <Star className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">节能效果显著，可节省{energySavings}%的能源消耗</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Star className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">适用于{product.applicable_industries.map(getIndustryLabel).join('、')}等行业</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Star className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">功率范围：{product.power_range}</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Star className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">专业的区域技术支持服务</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <Star className="w-4 h-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-gray-700">丹佛斯品牌保障，质量可靠</span>
+                    </li>
                   </ul>
                 </CardContent>
               </Card>
-            </TabsContent>
-
-            <TabsContent value="cases" className="mt-6">
-              <div className="space-y-4">
-                {cases.map((caseItem) => (
-                  <Card key={caseItem.id}>
-                    <CardContent className="p-6">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h3 className="font-semibold text-lg mb-1">{caseItem.title}</h3>
-                          <div className="flex items-center gap-4 text-sm text-gray-600">
-                            <div className="flex items-center gap-1">
-                              <MapPin className="w-4 h-4" />
-                              {caseItem.location}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Building className="w-4 h-4" />
-                              {caseItem.project_scale}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Calendar className="w-4 h-4" />
-                              {new Date(caseItem.created_at).toLocaleDateString()}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <p className="text-gray-700 mb-4">{caseItem.description}</p>
-                      
-                      <div className="grid grid-cols-2 gap-4 mb-4">
-                        <div className="p-3 bg-green-50 rounded">
-                          <div className="text-sm text-green-600 mb-1">节能效果</div>
-                          <div className="font-bold text-green-800">+{caseItem.energy_savings}%</div>
-                        </div>
-                        <div className="p-3 bg-blue-50 rounded">
-                          <div className="text-sm text-blue-600 mb-1">投资回报期</div>
-                          <div className="font-bold text-blue-800">{caseItem.investment_return}年</div>
-                        </div>
-                      </div>
-                      
-                      <Button variant="outline" size="sm">
-                        查看案例详情
-                      </Button>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
             </TabsContent>
           </Tabs>
         </div>
@@ -415,7 +466,7 @@ export default function ProductDetailPage() {
   );
 }
 
-// 联系厂商模态框组件（复用产品列表页的组件）
+// 联系厂商模态框组件
 interface ContactModalProps {
   product: Product;
   onClose: () => void;
@@ -448,7 +499,7 @@ function ContactModal({ product, onClose }: ContactModalProps) {
 
           <div className="mb-4 p-3 bg-gray-50 rounded">
             <div className="text-sm text-gray-600 mb-1">产品信息</div>
-            <div className="font-medium">{product.brand} {product.model}</div>
+            <div className="font-medium">{product.name}</div>
             <div className="text-sm text-gray-600">
               联系人: {product.contact_person} | {product.contact_phone}
             </div>
@@ -526,8 +577,3 @@ function ContactModal({ product, onClose }: ContactModalProps) {
     </div>
   );
 }
-
-
-
-
-
