@@ -1,597 +1,603 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Alert, AlertDescription } from "@/components/ui/alert"
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
-  Package, 
+  Loader2, 
+  Lock, 
   Plus, 
   Edit, 
   Trash2, 
-  Search,
-  Filter,
-  Upload,
+  Search, 
+  Upload, 
   Download,
-  Eye,
-  EyeOff,
-  CheckCircle,
-  XCircle
-} from "lucide-react"
-import { Product, ProductCategory, ContactRegion, ApplicableIndustry } from "@/types/product"
+  Building,
+  Package,
+  Save,
+  X
+} from 'lucide-react';
+import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
+import { useAdmin } from '@/contexts/AdminContext';
+import { Product, ProductCategory } from '@/types/product';
 
-export default function ProductManagementPage() {
-  const [products, setProducts] = useState<Product[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [showAddForm, setShowAddForm] = useState(false)
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [filterCategory, setFilterCategory] = useState<string>("")
-  const [filterRegion, setFilterRegion] = useState<string>("")
+// 区域联系人配置
+const regionContacts = {
+  north: { name: '张经理', phone: '010-12345678', email: 'north@danfoss.com.cn' },
+  east: { name: '李经理', phone: '021-12345678', email: 'east@danfoss.com.cn' },
+  south: { name: '王经理', phone: '020-12345678', email: 'south@danfoss.com.cn' },
+  central: { name: '刘经理', phone: '027-12345678', email: 'central@danfoss.com.cn' },
+  southwest: { name: '陈经理', phone: '028-12345678', email: 'southwest@danfoss.com.cn' },
+  northeast: { name: '赵经理', phone: '024-12345678', email: 'northeast@danfoss.com.cn' },
+  northwest: { name: '孙经理', phone: '029-12345678', email: 'northwest@danfoss.com.cn' }
+};
 
-  // 表单数据
+const regions = [
+  { value: 'north', label: '华北' },
+  { value: 'east', label: '华东' },
+  { value: 'south', label: '华南' },
+  { value: 'central', label: '华中' },
+  { value: 'southwest', label: '西南' },
+  { value: 'northeast', label: '东北' },
+  { value: 'northwest', label: '西北' }
+];
+
+const industries = [
+  { value: 'food_beverage', label: '食品饮料' },
+  { value: 'electronics', label: '电子半导体' },
+  { value: 'pharmaceutical', label: '制药生物制品' },
+  { value: 'tobacco', label: '烟草' },
+  { value: 'metallurgy', label: '金属冶炼/金属加工' },
+  { value: 'chemical', label: '化工' },
+  { value: 'automotive', label: '汽车工业' },
+  { value: 'machinery', label: '机械加工' },
+  { value: 'commercial_building', label: '商业建筑' },
+  { value: 'residential', label: '住宅' },
+  { value: 'hospital', label: '医院' },
+  { value: 'school', label: '学校' },
+  { value: 'other', label: '其他' }
+];
+
+const categories: { value: ProductCategory; label: string }[] = [
+  { value: 'compressor', label: '压缩机' },
+  { value: 'frequency_converter', label: '变频器' },
+  { value: 'heat_exchanger', label: '换热器' },
+  { value: 'hydraulic_valve', label: '水力平衡阀' },
+  { value: 'sensor', label: '传感器' },
+  { value: 'control_system', label: '控制系统' },
+  { value: 'expansion_valve', label: '膨胀阀' },
+  { value: 'filter_drier', label: '过滤器干燥器' },
+  { value: 'other', label: '其他' }
+];
+
+export default function AdminProductsPage() {
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { isAdmin, isLoading: adminLoading } = useAdmin();
+  
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  
   const [formData, setFormData] = useState<Partial<Product>>({
     name: '',
-    brand: '',
+    brand: '丹佛斯',
     model: '',
     power_range: '',
     applicable_industries: [],
     images: [],
-    contact_region: '',
-    contact_person: '',
-    contact_phone: '',
-    contact_email: '',
-    company: '',
-    category: 'compressor',
-    status: 'active'
-  })
+    contact_region: 'east',
+    category: 'other',
+    status: 'active',
+    source: 'manual'
+  });
 
-  // 模拟数据
+  // 加载产品数据
   useEffect(() => {
-    const mockProducts: Product[] = [
-      {
-        id: '1',
-        name: 'VLT变频器FC-102',
-        brand: 'Danfoss',
-        model: 'FC-102',
-        power_range: '0.37-90kW',
-        applicable_industries: ['food_beverage', 'electronics'],
-        images: ['/images/fc-102.jpg'],
-        contact_region: 'east',
-        contact_person: '张经理',
-        contact_phone: '138-0000-1234',
-        contact_email: 'zhang@danfoss.com',
-        company: '丹佛斯(上海)投资有限公司',
-        category: 'frequency_converter',
-        created_at: '2024-01-01',
-        updated_at: '2024-01-01',
-        status: 'active',
-        source: 'manual'
-      },
-      {
-        id: '2',
-        name: '涡旋压缩机CSH系列',
-        brand: 'Danfoss',
-        model: 'CSH-120',
-        power_range: '10-50kW',
-        applicable_industries: ['commercial_building', 'residential'],
-        images: ['/images/csh-120.jpg'],
-        contact_region: 'north',
-        contact_person: '李经理',
-        contact_phone: '139-0000-5678',
-        contact_email: 'li@danfoss.com',
-        company: '丹佛斯(天津)有限公司',
-        category: 'compressor',
-        created_at: '2024-01-02',
-        updated_at: '2024-01-02',
-        status: 'active',
-        source: 'manual'
+    loadProducts();
+  }, []);
+
+  // 搜索筛选
+  useEffect(() => {
+    const filtered = products.filter(product =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.model.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredProducts(filtered);
+  }, [products, searchTerm]);
+
+  const loadProducts = async () => {
+    setIsLoading(true);
+    try {
+      // 模拟从API加载数据
+      const storedProducts = localStorage.getItem('adminProducts');
+      if (storedProducts) {
+        setProducts(JSON.parse(storedProducts));
+      } else {
+        // 默认产品数据
+        const defaultProducts: Product[] = [
+          {
+            id: '1',
+            name: 'VLT® Flow Drive FC 111 变频器',
+            brand: '丹佛斯',
+            model: 'FC 111',
+            power_range: '0.75-630kW',
+            applicable_industries: ['food_beverage', 'electronics', 'commercial_building'],
+            images: ['/images/danfoss-fc111.jpg'],
+            contact_region: 'east',
+            contact_person: regionContacts.east.name,
+            contact_phone: regionContacts.east.phone,
+            contact_email: regionContacts.east.email,
+            company: '丹佛斯（中国）有限公司',
+            category: 'frequency_converter',
+            created_at: '2024-01-15T00:00:00Z',
+            updated_at: '2024-01-15T00:00:00Z',
+            status: 'active',
+            source: 'manual'
+          },
+          {
+            id: '2',
+            name: 'Performer® HHP 涡旋压缩机',
+            brand: '丹佛斯',
+            model: 'HHP',
+            power_range: '5-240kW',
+            applicable_industries: ['residential', 'commercial_building', 'hospital'],
+            images: ['/images/danfoss-performer-hhp.jpg'],
+            contact_region: 'north',
+            contact_person: regionContacts.north.name,
+            contact_phone: regionContacts.north.phone,
+            contact_email: regionContacts.north.email,
+            company: '丹佛斯（中国）有限公司',
+            category: 'compressor',
+            created_at: '2024-01-10T00:00:00Z',
+            updated_at: '2024-01-10T00:00:00Z',
+            status: 'active',
+            source: 'api'
+          }
+        ];
+        setProducts(defaultProducts);
+        localStorage.setItem('adminProducts', JSON.stringify(defaultProducts));
       }
-    ]
-    
-    setTimeout(() => {
-      setProducts(mockProducts)
-      setIsLoading(false)
-    }, 1000)
-  }, [])
-
-  const categories: { value: ProductCategory; label: string }[] = [
-    { value: 'compressor', label: '压缩机' },
-    { value: 'frequency_converter', label: '变频器' },
-    { value: 'heat_exchanger', label: '换热器' },
-    { value: 'hydraulic_valve', label: '水力平衡阀' },
-    { value: 'sensor', label: '传感器' },
-    { value: 'control_system', label: '控制系统' },
-    { value: 'expansion_valve', label: '膨胀阀' },
-    { value: 'filter_drier', label: '过滤器干燥器' },
-    { value: 'other', label: '其他' }
-  ]
-
-  const regions: { value: ContactRegion; label: string }[] = [
-    { value: 'north', label: '华北' },
-    { value: 'east', label: '华东' },
-    { value: 'south', label: '华南' },
-    { value: 'central', label: '华中' },
-    { value: 'southwest', label: '西南' },
-    { value: 'northeast', label: '东北' },
-    { value: 'northwest', label: '西北' }
-  ]
-
-  const industries: { value: ApplicableIndustry; label: string }[] = [
-    { value: 'food_beverage', label: '食品饮料' },
-    { value: 'electronics', label: '电子半导体' },
-    { value: 'pharmaceutical', label: '制药生物制品' },
-    { value: 'tobacco', label: '烟草' },
-    { value: 'metallurgy', label: '金属冶炼/金属加工' },
-    { value: 'chemical', label: '化工' },
-    { value: 'automotive', label: '汽车工业' },
-    { value: 'machinery', label: '机械加工' },
-    { value: 'commercial_building', label: '商业建筑' },
-    { value: 'residential', label: '住宅' },
-    { value: 'hospital', label: '医院' },
-    { value: 'school', label: '学校' },
-    { value: 'other', label: '其他' }
-  ]
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
-    if (editingProduct) {
-      // 编辑产品
-      setProducts(prev => prev.map(p => 
-        p.id === editingProduct.id 
-          ? { ...formData as Product, id: editingProduct.id, updated_at: new Date().toISOString() }
-          : p
-      ))
-      setEditingProduct(null)
-    } else {
-      // 添加新产品
-      const newProduct: Product = {
-        ...formData as Product,
-        id: Date.now().toString(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }
-      setProducts(prev => [...prev, newProduct])
-      setShowAddForm(false)
+    } catch (error) {
+      console.error('加载产品数据失败:', error);
+    } finally {
+      setIsLoading(false);
     }
-    
-    // 重置表单
+  };
+
+  const saveProducts = (newProducts: Product[]) => {
+    setProducts(newProducts);
+    localStorage.setItem('adminProducts', JSON.stringify(newProducts));
+  };
+
+  const handleAddProduct = () => {
     setFormData({
       name: '',
-      brand: '',
+      brand: '丹佛斯',
       model: '',
       power_range: '',
       applicable_industries: [],
       images: [],
-      contact_region: '',
-      contact_person: '',
-      contact_phone: '',
-      contact_email: '',
-      company: '',
-      category: 'compressor',
-      status: 'active'
-    })
-  }
+      contact_region: 'east',
+      category: 'other',
+      status: 'active',
+      source: 'manual'
+    });
+    setEditingProduct(null);
+    setShowAddForm(true);
+    setIsEditing(true);
+  };
 
-  const handleEdit = (product: Product) => {
-    setEditingProduct(product)
-    setFormData(product)
-    setShowAddForm(true)
-  }
+  const handleEditProduct = (product: Product) => {
+    setFormData(product);
+    setEditingProduct(product);
+    setShowAddForm(true);
+    setIsEditing(true);
+  };
 
-  const handleDelete = (productId: string) => {
+  const handleDeleteProduct = (productId: string) => {
     if (confirm('确定要删除这个产品吗？')) {
-      setProducts(prev => prev.filter(p => p.id !== productId))
+      const newProducts = products.filter(p => p.id !== productId);
+      saveProducts(newProducts);
     }
-  }
+  };
 
-  const handleIndustryChange = (industry: ApplicableIndustry, checked: boolean) => {
+  const handleSaveProduct = () => {
+    if (!formData.name || !formData.model || !formData.power_range) {
+      alert('请填写必填字段');
+      return;
+    }
+
+    const contact = regionContacts[formData.contact_region as keyof typeof regionContacts];
+    
+    const productData: Product = {
+      id: editingProduct?.id || Date.now().toString(),
+      name: formData.name!,
+      brand: formData.brand!,
+      model: formData.model!,
+      power_range: formData.power_range!,
+      applicable_industries: formData.applicable_industries!,
+      images: formData.images!,
+      contact_region: formData.contact_region!,
+      contact_person: contact.name,
+      contact_phone: contact.phone,
+      contact_email: contact.email,
+      company: '丹佛斯（中国）有限公司',
+      category: formData.category!,
+      status: formData.status!,
+      source: formData.source!,
+      created_at: editingProduct?.created_at || new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    let newProducts: Product[];
+    if (editingProduct) {
+      newProducts = products.map(p => p.id === editingProduct.id ? productData : p);
+    } else {
+      newProducts = [...products, productData];
+    }
+
+    saveProducts(newProducts);
+    setShowAddForm(false);
+    setIsEditing(false);
+    setEditingProduct(null);
+  };
+
+  const handleIndustryChange = (industry: string, checked: boolean) => {
     setFormData(prev => ({
       ...prev,
       applicable_industries: checked 
         ? [...(prev.applicable_industries || []), industry]
         : (prev.applicable_industries || []).filter(i => i !== industry)
-    }))
-  }
+    }));
+  };
 
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         product.model.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = !filterCategory || product.category === filterCategory
-    const matchesRegion = !filterRegion || product.contact_region === filterRegion
-    
-    return matchesSearch && matchesCategory && matchesRegion
-  })
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active':
-        return <Badge className="bg-green-100 text-green-800"><CheckCircle className="w-3 h-3 mr-1" />活跃</Badge>
-      case 'inactive':
-        return <Badge className="bg-red-100 text-red-800"><XCircle className="w-3 h-3 mr-1" />未激活</Badge>
-      case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800">待审核</Badge>
-      default:
-        return <Badge variant="secondary">{status}</Badge>
-    }
-  }
-
-  if (isLoading) {
+  if (authLoading || adminLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">加载中...</p>
-        </div>
+        <Loader2 className="h-8 w-8 animate-spin text-green-600" />
+        <span className="ml-3 text-gray-600">加载中...</span>
       </div>
-    )
+    );
+  }
+
+  if (!isAuthenticated || !isAdmin) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Card className="max-w-md w-full mx-4">
+          <CardHeader className="text-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Lock className="w-8 h-8 text-white" />
+            </div>
+            <CardTitle className="text-xl">访问受限</CardTitle>
+            <CardDescription>
+              您没有权限访问此管理页面。请联系管理员。
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild className="w-full bg-green-600 hover:bg-green-700">
+              <Link href="/">
+                返回首页
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
-        <div className="space-y-8">
-          {/* 页面标题 */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">产品管理</h1>
-              <p className="text-gray-600 mt-2">管理产品信息、图片和联系方式</p>
-            </div>
-            <div className="flex space-x-3">
-              <Button variant="outline">
-                <Download className="w-4 h-4 mr-2" />
-                导出
-              </Button>
-              <Button variant="outline">
-                <Upload className="w-4 h-4 mr-2" />
-                导入
-              </Button>
-              <Button onClick={() => setShowAddForm(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                添加产品
-              </Button>
-            </div>
-          </div>
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">产品管理</h1>
+          <Button onClick={handleAddProduct} className="bg-green-600 hover:bg-green-700">
+            <Plus className="w-4 h-4 mr-2" />
+            添加产品
+          </Button>
+        </div>
 
-          {/* 搜索和筛选 */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div>
-                  <Label htmlFor="search">搜索产品</Label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      id="search"
-                      placeholder="产品名称、品牌、型号..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-10"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Label htmlFor="category">产品类别</Label>
-                  <Select value={filterCategory} onValueChange={setFilterCategory}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="选择类别" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">全部类别</SelectItem>
-                      {categories.map(category => (
-                        <SelectItem key={category.value} value={category.value}>
-                          {category.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="region">联系区域</Label>
-                  <Select value={filterRegion} onValueChange={setFilterRegion}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="选择区域" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="">全部区域</SelectItem>
-                      {regions.map(region => (
-                        <SelectItem key={region.value} value={region.value}>
-                          {region.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex items-end">
-                  <Button variant="outline" className="w-full">
-                    <Filter className="w-4 h-4 mr-2" />
-                    筛选
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+        <Tabs defaultValue="list" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="list">产品列表</TabsTrigger>
+            <TabsTrigger value="import">批量导入</TabsTrigger>
+          </TabsList>
 
-          {/* 添加/编辑产品表单 */}
-          {showAddForm && (
+          <TabsContent value="list" className="space-y-6">
+            {/* 搜索和筛选 */}
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Package className="w-5 h-5" />
-                  <span>{editingProduct ? '编辑产品' : '添加产品'}</span>
+                <CardTitle className="flex items-center gap-2">
+                  <Search className="w-5 h-5" />
+                  搜索产品
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="name">产品名称 *</Label>
-                      <Input
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                        placeholder="请输入产品名称"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="brand">品牌 *</Label>
-                      <Input
-                        id="brand"
-                        value={formData.brand}
-                        onChange={(e) => setFormData(prev => ({ ...prev, brand: e.target.value }))}
-                        placeholder="请输入品牌"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="model">型号 *</Label>
-                      <Input
-                        id="model"
-                        value={formData.model}
-                        onChange={(e) => setFormData(prev => ({ ...prev, model: e.target.value }))}
-                        placeholder="请输入型号"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="power_range">功率范围 *</Label>
-                      <Input
-                        id="power_range"
-                        value={formData.power_range}
-                        onChange={(e) => setFormData(prev => ({ ...prev, power_range: e.target.value }))}
-                        placeholder="如: 10-50kW"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="category">产品类别 *</Label>
-                      <Select
-                        value={formData.category}
-                        onValueChange={(value) => setFormData(prev => ({ ...prev, category: value as ProductCategory }))}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map(category => (
-                            <SelectItem key={category.value} value={category.value}>
-                              {category.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="company">厂商公司 *</Label>
-                      <Input
-                        id="company"
-                        value={formData.company}
-                        onChange={(e) => setFormData(prev => ({ ...prev, company: e.target.value }))}
-                        placeholder="请输入厂商公司"
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label>适用行业或应用 *</Label>
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mt-2">
-                      {industries.map(industry => (
-                        <div key={industry.value} className="flex items-center space-x-2">
-                          <input
-                            type="checkbox"
-                            id={industry.value}
-                            checked={formData.applicable_industries?.includes(industry.value) || false}
-                            onChange={(e) => handleIndustryChange(industry.value, e.target.checked)}
-                            className="rounded border-gray-300"
-                          />
-                          <label htmlFor={industry.value} className="text-sm">
-                            {industry.label}
-                          </label>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="contact_region">联系区域 *</Label>
-                      <Select
-                        value={formData.contact_region}
-                        onValueChange={(value) => setFormData(prev => ({ ...prev, contact_region: value }))}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="选择联系区域" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {regions.map(region => (
-                            <SelectItem key={region.value} value={region.value}>
-                              {region.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="contact_person">联系人 *</Label>
-                      <Input
-                        id="contact_person"
-                        value={formData.contact_person}
-                        onChange={(e) => setFormData(prev => ({ ...prev, contact_person: e.target.value }))}
-                        placeholder="请输入联系人"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="contact_phone">联系电话 *</Label>
-                      <Input
-                        id="contact_phone"
-                        value={formData.contact_phone}
-                        onChange={(e) => setFormData(prev => ({ ...prev, contact_phone: e.target.value }))}
-                        placeholder="请输入联系电话"
-                        required
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="contact_email">联系邮箱</Label>
-                      <Input
-                        id="contact_email"
-                        type="email"
-                        value={formData.contact_email}
-                        onChange={(e) => setFormData(prev => ({ ...prev, contact_email: e.target.value }))}
-                        placeholder="请输入联系邮箱"
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <Label htmlFor="images">产品图片</Label>
+                <div className="flex gap-4">
+                  <div className="flex-1">
                     <Input
-                      id="images"
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      className="mt-1"
+                      placeholder="搜索产品名称、品牌或型号..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <p className="text-sm text-gray-500 mt-1">支持上传多张图片</p>
                   </div>
-
-                  <div className="flex justify-end space-x-3">
-                    <Button 
-                      type="button" 
-                      variant="outline"
-                      onClick={() => {
-                        setShowAddForm(false)
-                        setEditingProduct(null)
-                        setFormData({
-                          name: '',
-                          brand: '',
-                          model: '',
-                          power_range: '',
-                          applicable_industries: [],
-                          images: [],
-                          contact_region: '',
-                          contact_person: '',
-                          contact_phone: '',
-                          contact_email: '',
-                          company: '',
-                          category: 'compressor',
-                          status: 'active'
-                        })
-                      }}
-                    >
-                      取消
-                    </Button>
-                    <Button type="submit">
-                      {editingProduct ? '更新产品' : '添加产品'}
-                    </Button>
-                  </div>
-                </form>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* 产品列表 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => (
-              <Card key={product.id} className="overflow-hidden">
-                <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                  {product.images && product.images.length > 0 ? (
-                    <img 
-                      src={product.images[0]} 
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <Package className="w-12 h-12 text-gray-400" />
-                  )}
                 </div>
-                <CardContent className="p-4">
-                  <div className="space-y-2">
-                    <div className="flex items-start justify-between">
-                      <h3 className="font-semibold text-lg">{product.name}</h3>
-                      {getStatusBadge(product.status)}
-                    </div>
-                    <p className="text-sm text-gray-600">{product.brand} {product.model}</p>
-                    <p className="text-sm text-gray-600">功率范围: {product.power_range}</p>
-                    <p className="text-sm text-gray-600">联系区域: {regions.find(r => r.value === product.contact_region)?.label}</p>
-                    <div className="flex flex-wrap gap-1">
-                      {product.applicable_industries.slice(0, 2).map(industry => (
-                        <Badge key={industry} variant="outline" className="text-xs">
-                          {industries.find(i => i.value === industry)?.label}
-                        </Badge>
-                      ))}
-                      {product.applicable_industries.length > 2 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{product.applicable_industries.length - 2}
-                        </Badge>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex justify-end space-x-2 mt-4">
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => handleEdit(product)}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      size="sm" 
-                      variant="outline"
-                      onClick={() => handleDelete(product.id)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {filteredProducts.length === 0 && (
-            <Card>
-              <CardContent className="text-center py-12">
-                <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">暂无产品</h3>
-                <p className="text-gray-600 mb-4">还没有添加任何产品，点击上方按钮开始添加</p>
-                <Button onClick={() => setShowAddForm(true)}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  添加产品
-                </Button>
               </CardContent>
             </Card>
-          )}
-        </div>
+
+            {/* 产品列表 */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Package className="w-5 h-5" />
+                  产品列表 ({filteredProducts.length})
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {isLoading ? (
+                  <div className="text-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-green-600 mx-auto mb-4" />
+                    <p className="text-gray-600">加载中...</p>
+                  </div>
+                ) : filteredProducts.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Building className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-600">暂无产品数据</p>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {filteredProducts.map((product) => (
+                      <div key={product.id} className="border rounded-lg p-4 hover:bg-gray-50">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-2">
+                              <h3 className="text-lg font-semibold">{product.name}</h3>
+                              <Badge variant="secondary">{product.brand}</Badge>
+                              <Badge variant="outline">{product.model}</Badge>
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                              <div>
+                                <span className="font-medium">功率范围:</span> {product.power_range}
+                              </div>
+                              <div>
+                                <span className="font-medium">联系区域:</span> {regions.find(r => r.value === product.contact_region)?.label}
+                              </div>
+                              <div>
+                                <span className="font-medium">联系人:</span> {product.contact_person}
+                              </div>
+                              <div>
+                                <span className="font-medium">状态:</span> 
+                                <Badge variant={product.status === 'active' ? 'default' : 'secondary'} className="ml-1">
+                                  {product.status === 'active' ? '活跃' : '非活跃'}
+                                </Badge>
+                              </div>
+                            </div>
+                            <div className="mt-2">
+                              <span className="font-medium text-sm">适用行业:</span>
+                              <div className="flex flex-wrap gap-1 mt-1">
+                                {product.applicable_industries.slice(0, 3).map(industry => (
+                                  <Badge key={industry} variant="outline" className="text-xs">
+                                    {industries.find(i => i.value === industry)?.label}
+                                  </Badge>
+                                ))}
+                                {product.applicable_industries.length > 3 && (
+                                  <Badge variant="outline" className="text-xs">
+                                    +{product.applicable_industries.length - 3}
+                                  </Badge>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex gap-2 ml-4">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEditProduct(product)}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleDeleteProduct(product.id)}
+                              className="text-red-600 hover:text-red-700"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="import" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>批量导入产品</CardTitle>
+                <CardDescription>
+                  支持Excel文件批量导入产品信息
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="text-center py-8">
+                  <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-600 mb-4">批量导入功能开发中</p>
+                  <Button variant="outline">
+                    <Download className="w-4 h-4 mr-2" />
+                    下载模板
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        {/* 添加/编辑产品表单 */}
+        {showAddForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <Card className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <CardTitle>
+                    {editingProduct ? '编辑产品' : '添加产品'}
+                  </CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setShowAddForm(false);
+                      setIsEditing(false);
+                      setEditingProduct(null);
+                    }}
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="name">产品名称 *</Label>
+                    <Input
+                      id="name"
+                      value={formData.name || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      placeholder="请输入产品名称"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="brand">品牌 *</Label>
+                    <Input
+                      id="brand"
+                      value={formData.brand || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, brand: e.target.value }))}
+                      placeholder="请输入品牌"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="model">型号 *</Label>
+                    <Input
+                      id="model"
+                      value={formData.model || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, model: e.target.value }))}
+                      placeholder="请输入型号"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="power_range">功率范围 *</Label>
+                    <Input
+                      id="power_range"
+                      value={formData.power_range || ''}
+                      onChange={(e) => setFormData(prev => ({ ...prev, power_range: e.target.value }))}
+                      placeholder="如：0.75-630kW"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="category">产品类别 *</Label>
+                    <Select
+                      value={formData.category}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, category: value as ProductCategory }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择产品类别" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {categories.map(category => (
+                          <SelectItem key={category.value} value={category.value}>
+                            {category.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="contact_region">联系区域 *</Label>
+                    <Select
+                      value={formData.contact_region}
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, contact_region: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="选择联系区域" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {regions.map(region => (
+                          <SelectItem key={region.value} value={region.value}>
+                            {region.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div>
+                  <Label>适用行业 *</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                    {industries.map(industry => (
+                      <label key={industry.value} className="flex items-center space-x-2">
+                        <input
+                          type="checkbox"
+                          checked={formData.applicable_industries?.includes(industry.value) || false}
+                          onChange={(e) => handleIndustryChange(industry.value, e.target.checked)}
+                          className="rounded"
+                        />
+                        <span className="text-sm">{industry.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="images">产品图片URL</Label>
+                  <Input
+                    id="images"
+                    value={formData.images?.[0] || ''}
+                    onChange={(e) => setFormData(prev => ({ ...prev, images: [e.target.value] }))}
+                    placeholder="请输入产品图片URL"
+                  />
+                </div>
+
+                <div className="flex justify-end gap-2 pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowAddForm(false);
+                      setIsEditing(false);
+                      setEditingProduct(null);
+                    }}
+                  >
+                    取消
+                  </Button>
+                  <Button onClick={handleSaveProduct} className="bg-green-600 hover:bg-green-700">
+                    <Save className="w-4 h-4 mr-2" />
+                    保存
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
-  )
+  );
 }

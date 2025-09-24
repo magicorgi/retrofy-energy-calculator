@@ -188,13 +188,39 @@ const industries = [
 ];
 
 export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>(mockProducts);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(mockProducts);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [filters, setFilters] = useState<ProductFilter>({});
   const [sort, setSort] = useState<ProductSort>({ field: 'name', order: 'asc' });
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [showComparison, setShowComparison] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 加载产品数据
+  useEffect(() => {
+    loadProducts();
+  }, []);
+
+  const loadProducts = async () => {
+    setIsLoading(true);
+    try {
+      // 从管理员管理的产品数据中加载
+      const adminProducts = localStorage.getItem('adminProducts');
+      if (adminProducts) {
+        const parsedProducts = JSON.parse(adminProducts);
+        setProducts(parsedProducts);
+      } else {
+        // 如果没有管理员数据，使用默认数据
+        setProducts(mockProducts);
+      }
+    } catch (error) {
+      console.error('加载产品数据失败:', error);
+      setProducts(mockProducts);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // 计算节能效果（基于产品类别）
   const calculateEnergySavings = (product: Product) => {
@@ -527,20 +553,27 @@ export default function ProductsPage() {
             </div>
 
             {/* 产品网格 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-              {filteredProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  energySavings={calculateEnergySavings(product)}
-                  isSelected={selectedProducts.includes(product.id)}
-                  onToggleComparison={toggleProductComparison}
-                  canSelect={selectedProducts.length < 3}
-                />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+                <p className="text-gray-600">加载产品数据中...</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {filteredProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    energySavings={calculateEnergySavings(product)}
+                    isSelected={selectedProducts.includes(product.id)}
+                    onToggleComparison={toggleProductComparison}
+                    canSelect={selectedProducts.length < 3}
+                  />
+                ))}
+              </div>
+            )}
 
-            {filteredProducts.length === 0 && (
+            {!isLoading && filteredProducts.length === 0 && (
               <div className="text-center py-12">
                 <div className="text-gray-400 mb-4">
                   <Building className="w-16 h-16 mx-auto" />
