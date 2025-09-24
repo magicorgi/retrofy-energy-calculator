@@ -21,6 +21,7 @@ import {
   ClipboardList,
   User
 } from "lucide-react"
+import { sendInvitationEmail } from "@/lib/email"
 
 interface User {
   id: string
@@ -109,21 +110,22 @@ export default function UserManagementPage() {
     setInviteSuccess(false)
 
     try {
-      // 模拟API调用
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
       // 生成临时密码
       const tempPassword = Math.random().toString(36).slice(-8)
       
-      // 模拟发送邮件
-      console.log('发送邀请邮件:', {
+      // 发送邀请邮件
+      const emailResult = await sendInvitationEmail({
         email: inviteForm.email,
         name: inviteForm.name,
-        role: inviteForm.role,
-        permissions: inviteForm.permissions,
         tempPassword,
+        permissions: inviteForm.permissions,
         message: inviteForm.message
       })
+
+      if (!emailResult.success) {
+        setInviteError(emailResult.message)
+        return
+      }
 
       // 添加到用户列表
       const newUser: User = {
@@ -153,6 +155,7 @@ export default function UserManagementPage() {
       alert(`邀请邮件已发送到 ${inviteForm.email}\n临时密码: ${tempPassword}`)
       
     } catch (error) {
+      console.error('邀请用户错误:', error)
       setInviteError('发送邀请失败，请重试')
     } finally {
       setIsInviting(false)

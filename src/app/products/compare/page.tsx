@@ -25,29 +25,17 @@ import Link from 'next/link';
 const mockProducts: Product[] = [
   {
     id: '1',
+    name: 'VLT® Flow Drive FC 111 变频器',
     brand: '丹佛斯',
-    model: 'VLT® Flow Drive FC 111',
-    cooling_capacity: 75,
-    cop: 0.95,
-    iplv: 0.96,
-    price_min: 8000,
-    price_max: 15000,
-    price_unit: '元/台',
+    model: 'FC 111',
+    power_range: '0.75-630kW',
+    applicable_industries: ['food_beverage', 'electronics', 'commercial_building'],
     images: ['/images/danfoss-fc111.jpg'],
-    manual_url: 'https://www.danfoss.com/zh-cn/products/drives/ac-drives/vlt-flow-drive-fc-111/',
-    contact_person: '丹佛斯技术支持',
+    contact_region: 'east',
+    contact_person: '张经理',
     contact_phone: '400-890-8986',
     contact_email: 'china.drives@danfoss.com',
     company: '丹佛斯（中国）有限公司',
-    description: '专为风机和泵类应用设计的变频器，具备火灾模式、跳跃频率、皮带监控等功能',
-    features: ['火灾越控模式', '跳跃频率', '皮带监控', '节能优化', 'PID控制'],
-    specifications: {
-      '功率范围': '0.75-630kW',
-      '电源': '380-480V/3Ph',
-      '防护等级': 'IP20/IP55',
-      '效率': '≥95%'
-    },
-    applicable_cities: ['北京', '上海', '广州', '深圳', '天津', '重庆', '杭州', '南京'],
     category: 'frequency_converter',
     energy_efficiency_grade: '一级',
     created_at: '2024-01-15T00:00:00Z',
@@ -57,33 +45,18 @@ const mockProducts: Product[] = [
   },
   {
     id: '2',
+    name: 'Performer® HHP 涡旋压缩机',
     brand: '丹佛斯',
-    model: 'Performer® HHP 涡旋压缩机',
-    cooling_capacity: 120,
-    heating_capacity: 140,
-    cop: 4.8,
-    iplv: 5.2,
-    price_min: 25000,
-    price_max: 35000,
-    price_unit: '元/台',
+    model: 'HHP',
+    power_range: '5-240kW',
+    applicable_industries: ['residential', 'commercial_building', 'hospital'],
     images: ['/images/danfoss-performer-hhp.jpg'],
-    manual_url: 'https://www.danfoss.com/zh-cn/products/compressors/scroll-compressors/performer-hhp/',
-    contact_person: '丹佛斯压缩机部',
+    contact_region: 'north',
+    contact_person: '李经理',
     contact_phone: '400-890-8986',
     contact_email: 'china.compressors@danfoss.com',
     company: '丹佛斯（中国）有限公司',
-    description: '适用于住宅和商用热泵的高效涡旋压缩机，即使在-20°C低温下也能可靠运行',
-    features: ['高效涡旋设计', '低温运行', '全新簧片阀', '优化涡旋组', '可靠性高'],
-    specifications: {
-      '功率范围': '5-240kW',
-      '制冷剂': 'R410A/R32/R134a',
-      '工作温度': '-20°C ~ 65°C',
-      '噪音': '≤58dB(A)'
-    },
-    applicable_cities: ['北京', '上海', '广州', '深圳', '成都', '西安', '沈阳', '哈尔滨'],
     category: 'compressor',
-    energy_efficiency_grade: '一级',
-    refrigerant_type: 'R410A',
     created_at: '2024-01-10T00:00:00Z',
     updated_at: '2024-01-10T00:00:00Z',
     status: 'active',
@@ -91,31 +64,18 @@ const mockProducts: Product[] = [
   },
   {
     id: '3',
+    name: 'H系列微板换热器 MPHE',
     brand: '丹佛斯',
-    model: 'H系列微板换热器 MPHE',
-    cooling_capacity: 200,
-    cop: 0.98,
-    iplv: 0.99,
-    price_min: 12000,
-    price_max: 20000,
-    price_unit: '元/台',
+    model: 'MPHE',
+    power_range: '50-500kW',
+    applicable_industries: ['commercial_building', 'hospital', 'school'],
     images: ['/images/danfoss-mphe.jpg'],
-    manual_url: 'https://www.danfoss.com/zh-cn/products/heat-exchangers/plate-heat-exchangers/',
-    contact_person: '丹佛斯换热器部',
+    contact_region: 'south',
+    contact_person: '王经理',
     contact_phone: '400-890-8986',
     contact_email: 'china.heatexchangers@danfoss.com',
     company: '丹佛斯（中国）有限公司',
-    description: '用于空气源或地源热泵的高效微板换热器，可作冷凝器或蒸发器使用',
-    features: ['紧凑设计', '高效换热', '耐腐蚀', '易维护', '节能环保'],
-    specifications: {
-      '换热量': '50-500kW',
-      '工作压力': '≤3.0MPa',
-      '工作温度': '-40°C ~ 180°C',
-      '材质': '不锈钢316L'
-    },
-    applicable_cities: ['北京', '上海', '广州', '深圳', '杭州', '南京', '武汉', '长沙'],
     category: 'heat_exchanger',
-    energy_efficiency_grade: '一级',
     created_at: '2024-01-08T00:00:00Z',
     updated_at: '2024-01-08T00:00:00Z',
     status: 'active',
@@ -137,15 +97,51 @@ function ProductCompareContent() {
   }, [searchParams]);
 
   const calculateEnergySavings = (product: Product) => {
-    const baselineCOP = 3.0;
-    return ((product.cop - baselineCOP) / baselineCOP * 100);
+    // 根据产品类别返回不同的节能效果
+    const savingsMap = {
+      'frequency_converter': 25,
+      'compressor': 30,
+      'heat_exchanger': 20,
+      'hydraulic_valve': 15,
+      'sensor': 10,
+      'control_system': 18,
+      'expansion_valve': 12,
+      'filter_drier': 8,
+      'other': 5
+    };
+    return savingsMap[product.category] || 5;
   };
 
-  const formatPrice = (product: Product) => {
-    if (product.price_min === product.price_max) {
-      return `${product.price_min.toLocaleString()} ${product.price_unit}`;
-    }
-    return `${product.price_min.toLocaleString()} - ${product.price_max.toLocaleString()} ${product.price_unit}`;
+  const getIndustryLabel = (industry: string) => {
+    const industryMap = {
+      'food_beverage': '食品饮料',
+      'electronics': '电子半导体',
+      'pharmaceutical': '制药生物制品',
+      'tobacco': '烟草',
+      'metallurgy': '金属冶炼/金属加工',
+      'chemical': '化工',
+      'automotive': '汽车工业',
+      'machinery': '机械加工',
+      'commercial_building': '商业建筑',
+      'residential': '住宅',
+      'hospital': '医院',
+      'school': '学校',
+      'other': '其他'
+    };
+    return industryMap[industry as keyof typeof industryMap] || industry;
+  };
+
+  const getRegionLabel = (region: string) => {
+    const regionMap = {
+      'north': '华北',
+      'east': '华东',
+      'south': '华南',
+      'central': '华中',
+      'southwest': '西南',
+      'northeast': '东北',
+      'northwest': '西北'
+    };
+    return regionMap[region as keyof typeof regionMap] || region;
   };
 
   const removeProduct = (productId: string) => {
@@ -281,14 +277,11 @@ function ProductCompareContent() {
             <div className="grid grid-cols-4 gap-0 border-b">
               <div className="p-4 bg-gray-50 font-medium text-gray-900 flex items-center gap-2">
                 <Thermometer className="w-4 h-4 text-blue-500" />
-                制冷量 (kW)
+                功率范围
               </div>
               {selectedProducts.map((product) => (
                 <div key={product.id} className="p-4 border-l">
-                  <div className="font-medium">{product.cooling_capacity}</div>
-                  {product.heating_capacity && (
-                    <div className="text-sm text-gray-600">制热: {product.heating_capacity} kW</div>
-                  )}
+                  <div className="font-medium">{product.power_range}</div>
                 </div>
               ))}
             </div>
@@ -296,11 +289,11 @@ function ProductCompareContent() {
             <div className="grid grid-cols-4 gap-0 border-b">
               <div className="p-4 bg-gray-50 font-medium text-gray-900 flex items-center gap-2">
                 <Zap className="w-4 h-4 text-green-500" />
-                COP
+                联系区域
               </div>
               {selectedProducts.map((product) => (
                 <div key={product.id} className="p-4 border-l">
-                  <div className="font-medium">{product.cop}</div>
+                  <div className="font-medium">{getRegionLabel(product.contact_region)}</div>
                 </div>
               ))}
             </div>
@@ -308,11 +301,34 @@ function ProductCompareContent() {
             <div className="grid grid-cols-4 gap-0 border-b">
               <div className="p-4 bg-gray-50 font-medium text-gray-900 flex items-center gap-2">
                 <TrendingUp className="w-4 h-4 text-orange-500" />
-                IPLV
+                联系人
               </div>
               {selectedProducts.map((product) => (
                 <div key={product.id} className="p-4 border-l">
-                  <div className="font-medium">{product.iplv}</div>
+                  <div className="font-medium">{product.contact_person}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid grid-cols-4 gap-0 border-b">
+              <div className="p-4 bg-gray-50 font-medium text-gray-900 flex items-center gap-2">
+                <Star className="w-4 h-4 text-green-500" />
+                适用行业
+              </div>
+              {selectedProducts.map((product) => (
+                <div key={product.id} className="p-4 border-l">
+                  <div className="space-y-1">
+                    {product.applicable_industries.slice(0, 2).map(industry => (
+                      <Badge key={industry} variant="outline" className="text-xs mr-1">
+                        {getIndustryLabel(industry)}
+                      </Badge>
+                    ))}
+                    {product.applicable_industries.length > 2 && (
+                      <Badge variant="outline" className="text-xs">
+                        +{product.applicable_industries.length - 2}
+                      </Badge>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -331,49 +347,7 @@ function ProductCompareContent() {
               ))}
             </div>
 
-            {/* 价格对比 */}
-            <div className="grid grid-cols-4 gap-0 border-b">
-              <div className="p-4 bg-gray-50 font-medium text-gray-900 flex items-center gap-2">
-                <DollarSign className="w-4 h-4 text-purple-500" />
-                价格区间
-              </div>
-              {selectedProducts.map((product) => (
-                <div key={product.id} className="p-4 border-l">
-                  <div className="font-medium">{formatPrice(product)}</div>
-                </div>
-              ))}
-            </div>
 
-            {/* 制冷剂类型 */}
-            <div className="grid grid-cols-4 gap-0 border-b">
-              <div className="p-4 bg-gray-50 font-medium text-gray-900">制冷剂</div>
-              {selectedProducts.map((product) => (
-                <div key={product.id} className="p-4 border-l">
-                  <div>{product.refrigerant_type || '-'}</div>
-                </div>
-              ))}
-            </div>
-
-            {/* 适用城市 */}
-            <div className="grid grid-cols-4 gap-0 border-b">
-              <div className="p-4 bg-gray-50 font-medium text-gray-900">适用城市</div>
-              {selectedProducts.map((product) => (
-                <div key={product.id} className="p-4 border-l">
-                  <div className="flex flex-wrap gap-1">
-                    {product.applicable_cities?.slice(0, 3).map(city => (
-                      <Badge key={city} variant="outline" className="text-xs">
-                        {city}
-                      </Badge>
-                    ))}
-                    {product.applicable_cities && product.applicable_cities.length > 3 && (
-                      <Badge variant="outline" className="text-xs">
-                        +{product.applicable_cities.length - 3}
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
 
             {/* 产品特点 */}
             <div className="grid grid-cols-4 gap-0">
