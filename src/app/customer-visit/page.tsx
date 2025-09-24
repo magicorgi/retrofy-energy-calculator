@@ -818,15 +818,34 @@ export default function CustomerVisitPage() {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">客户拜访工具</h1>
           <p className="text-gray-600">记录客户拜访中的关键信息</p>
+          <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-center">
+            <Button 
+              variant="outline" 
+              onClick={() => setCurrentStep(1)}
+              className="w-full sm:w-auto"
+            >
+              新建拜访记录
+            </Button>
+            <Button 
+              variant="outline"
+              onClick={() => {
+                // 这里可以添加查看历史记录的逻辑
+                alert('历史记录功能开发中，敬请期待！');
+              }}
+              className="w-full sm:w-auto"
+            >
+              查看历史记录
+            </Button>
+          </div>
         </div>
 
         {/* 步骤导航 */}
         <div className="mb-8">
           {/* 移动端步骤图标 - 水平滚动 */}
           <div className="block md:hidden mb-4">
-            <div className="flex overflow-x-auto pb-2 space-x-3">
+            <div className="flex overflow-x-auto pb-2 space-x-4 px-2">
               {steps.map((step, index) => (
-                <div key={step.id} className="flex-shrink-0 flex flex-col items-center">
+                <div key={step.id} className="flex-shrink-0 flex flex-col items-center min-w-[80px]">
                   <div
                     className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-colors duration-200 cursor-pointer ${
                       currentStep === step.id
@@ -843,7 +862,7 @@ export default function CustomerVisitPage() {
                       React.createElement(step.icon, { className: "w-5 h-5" })
                     )}
                   </div>
-                  <p className={`text-xs font-medium mt-1 ${
+                  <p className={`text-xs font-medium mt-1 text-center ${
                     currentStep === step.id ? 'text-green-600' : 'text-gray-500'
                   }`}>
                     {step.title}
