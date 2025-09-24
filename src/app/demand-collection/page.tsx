@@ -362,10 +362,83 @@ export default function DemandCollectionPage() {
                 </ul>
               </div>
             )}
+            
+            {surveyType === 'park' && (
+              <div className="mt-6 p-4 bg-purple-50 rounded-lg border-2 border-dashed border-purple-200">
+                <div className="text-center">
+                  <AlertCircle className="w-8 h-8 mx-auto mb-3 text-purple-500" />
+                  <h4 className="font-medium text-purple-900 mb-2">园区调研功能开发中</h4>
+                  <p className="text-sm text-purple-700">
+                    园区调研功能正在开发中，敬请期待！
+                  </p>
+                  <p className="text-xs text-purple-600 mt-2">
+                    您可以选择工厂调研或建筑调研开始需求收集
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         );
         
       case 2:
+        if (surveyType === 'park') {
+          return (
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <AlertCircle className="w-16 h-16 mx-auto mb-4 text-purple-500" />
+                <h3 className="text-xl font-semibold text-gray-900 mb-2">园区调研功能开发中</h3>
+                <p className="text-gray-600">
+                  园区调研功能正在开发中，敬请期待！
+                </p>
+              </div>
+              
+              <Card className="border-2 border-dashed border-purple-200">
+                <CardContent className="p-8 text-center">
+                  <div className="space-y-4">
+                    <div className="w-20 h-20 bg-purple-100 rounded-full flex items-center justify-center mx-auto">
+                      <Building className="w-10 h-10 text-purple-600" />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-medium text-purple-900 mb-2">园区调研功能开发中</h4>
+                      <p className="text-purple-700 mb-4">
+                        我们正在开发园区调研功能，将包括：
+                      </p>
+                      <ul className="text-sm text-purple-600 space-y-1 mb-6">
+                        <li>• 园区基本情况调研</li>
+                        <li>• 多建筑能耗分析</li>
+                        <li>• 园区级能源管理</li>
+                        <li>• 分布式能源系统</li>
+                      </ul>
+                      <p className="text-xs text-purple-500">
+                        敬请期待，或选择工厂调研、建筑调研开始需求收集
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <div className="flex justify-center space-x-4">
+                <Button 
+                  variant="outline" 
+                  onClick={() => setSurveyType('factory')}
+                  className="flex items-center space-x-2"
+                >
+                  <Building className="w-4 h-4" />
+                  <span>选择工厂调研</span>
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setSurveyType('building')}
+                  className="flex items-center space-x-2"
+                >
+                  <Building className="w-4 h-4" />
+                  <span>选择建筑调研</span>
+                </Button>
+              </div>
+            </div>
+          );
+        }
+        
         return (
           <div className="space-y-6">
             <div className="grid md:grid-cols-2 gap-4">

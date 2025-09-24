@@ -2,28 +2,18 @@
 
 export interface Product {
   id: string;
+  name: string; // 产品名称
   brand: string; // 品牌
   model: string; // 型号
-  cooling_capacity: number; // 制冷量(kW)
-  heating_capacity?: number; // 制热量(kW)
-  cop: number; // COP
-  iplv: number; // IPLV
-  price_min: number; // 价格区间最小值
-  price_max: number; // 价格区间最大值
-  price_unit: string; // 价格单位 (元/kW, 万元/台)
+  power_range: string; // 功率范围 (如: "10-50kW", "50-100kW")
+  applicable_industries: string[]; // 适用行业或应用
   images: string[]; // 产品图片URL数组
-  manual_url?: string; // 技术手册URL
+  contact_region: string; // 联系区域
   contact_person: string; // 联系人
   contact_phone: string; // 联系电话
   contact_email?: string; // 联系邮箱
   company: string; // 厂商公司
-  description?: string; // 产品描述
-  features?: string[]; // 产品特点
-  specifications?: Record<string, any>; // 技术规格
-  applicable_cities?: string[]; // 适用城市
   category: ProductCategory; // 产品类别
-  energy_efficiency_grade?: string; // 能效等级
-  refrigerant_type?: string; // 制冷剂类型
   created_at: string;
   updated_at: string;
   status: 'active' | 'inactive' | 'pending'; // 状态
@@ -41,21 +31,40 @@ export type ProductCategory =
   | 'filter_drier' // 过滤器干燥器
   | 'other'; // 其他
 
+export type ContactRegion = 
+  | 'north' // 华北
+  | 'east' // 华东
+  | 'south' // 华南
+  | 'central' // 华中
+  | 'southwest' // 西南
+  | 'northeast' // 东北
+  | 'northwest'; // 西北
+
+export type ApplicableIndustry = 
+  | 'food_beverage' // 食品饮料
+  | 'electronics' // 电子半导体
+  | 'pharmaceutical' // 制药生物制品
+  | 'tobacco' // 烟草
+  | 'metallurgy' // 金属冶炼/金属加工
+  | 'chemical' // 化工
+  | 'automotive' // 汽车工业
+  | 'machinery' // 机械加工
+  | 'commercial_building' // 商业建筑
+  | 'residential' // 住宅
+  | 'hospital' // 医院
+  | 'school' // 学校
+  | 'other'; // 其他
+
 export interface ProductFilter {
-  city?: string; // 城市筛选
   brand?: string; // 品牌筛选
   category?: ProductCategory; // 类别筛选
-  cooling_capacity_min?: number; // 制冷量最小值
-  cooling_capacity_max?: number; // 制冷量最大值
-  price_min?: number; // 价格最小值
-  price_max?: number; // 价格最大值
-  cop_min?: number; // COP最小值
-  iplv_min?: number; // IPLV最小值
-  energy_grade?: string; // 能效等级
+  power_range?: string; // 功率范围筛选
+  applicable_industry?: string; // 适用行业筛选
+  contact_region?: string; // 联系区域筛选
 }
 
 export interface ProductSort {
-  field: 'energy_savings' | 'price' | 'cop' | 'iplv' | 'cooling_capacity' | 'created_at';
+  field: 'name' | 'brand' | 'power_range' | 'created_at';
   order: 'asc' | 'desc';
 }
 

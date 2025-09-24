@@ -43,9 +43,10 @@ export default function CustomerVisitPage() {
 
     // 商务关系模块
     decisionMaker: {
+      name: '',
       position: '',
       businessScope: '',
-      relationshipLevel: ''
+      relationshipDistance: ''
     },
     
     // 采购信息模块
@@ -102,7 +103,12 @@ export default function CustomerVisitPage() {
 
   const handleNext = () => {
     if (currentStep < totalSteps) {
-      setCurrentStep(currentStep + 1);
+      const completionRate = getStepCompletionRate(currentStep);
+      if (completionRate >= 70) {
+        setCurrentStep(currentStep + 1);
+      } else {
+        alert(`当前步骤完成度不足70%（当前：${completionRate}%），请完善必填信息后再继续。`);
+      }
     }
   };
 
@@ -147,31 +153,68 @@ export default function CustomerVisitPage() {
     }));
   };
 
-  // 计算每个步骤的完成度
+  // 计算每个步骤的完成度（所有字段都是必填的）
   const getStepCompletionRate = (stepId: number) => {
     switch (stepId) {
       case 1: // 客户信息
-        const basicFields = [formData.customerName, formData.customerCompany, formData.visitDate, formData.visitLocation];
+        const basicFields = [
+          formData.customerName, 
+          formData.customerCompany, 
+          formData.visitDate, 
+          formData.visitLocation
+        ];
         return Math.round((basicFields.filter(field => field.trim() !== '').length / basicFields.length) * 100);
       
       case 2: // 商务关系
-        const businessFields = [formData.decisionMaker.position];
+        const businessFields = [
+          formData.decisionMaker.name,
+          formData.decisionMaker.position,
+          formData.decisionMaker.businessScope,
+          formData.decisionMaker.relationshipDistance
+        ];
         return Math.round((businessFields.filter(field => field.trim() !== '').length / businessFields.length) * 100);
       
       case 3: // 采购信息
-        const procurementFields = [formData.procurement.procurementMethod];
+        const procurementFields = [
+          formData.procurement.procurementMethod,
+          formData.procurement.projectTime,
+          formData.procurement.budgetTime
+        ];
         return Math.round((procurementFields.filter(field => field.trim() !== '').length / procurementFields.length) * 100);
       
       case 4: // 设备信息
-        const equipmentFields = [formData.equipment.danfossUsage, formData.equipment.competitorUsage, formData.equipment.importantPositions, formData.equipment.importanceReason];
+        const equipmentFields = [
+          formData.equipment.danfossUsage,
+          formData.equipment.competitorUsage,
+          formData.equipment.useEnvironment,
+          formData.equipment.machineModel,
+          formData.equipment.startAge,
+          formData.equipment.powerLevel,
+          formData.equipment.mainApplication,
+          formData.equipment.importantPositions,
+          formData.equipment.importanceReason,
+          formData.equipment.downtimeLoss,
+          formData.equipment.currentPainPoints,
+          formData.equipment.currentSolutions
+        ];
         return Math.round((equipmentFields.filter(field => field.trim() !== '').length / equipmentFields.length) * 100);
       
       case 5: // 供应商信息
-        const supplierFields = [formData.suppliers.maintenanceProvider, formData.suppliers.replacementProvider];
+        const supplierFields = [
+          formData.suppliers.maintenanceProvider,
+          formData.suppliers.replacementProvider
+        ];
         return Math.round((supplierFields.filter(field => field.trim() !== '').length / supplierFields.length) * 100);
       
       case 6: // 机会信息
-        return 0; // 机会信息都是可选的，完成度始终为0
+        const opportunityFields = [
+          formData.opportunity.currentBudget,
+          formData.opportunity.projects,
+          formData.opportunity.participation,
+          formData.opportunity.competitors,
+          formData.opportunity.nextYearPlan
+        ];
+        return Math.round((opportunityFields.filter(field => field.trim() !== '').length / opportunityFields.length) * 100);
       
       default:
         return 0;
@@ -253,6 +296,7 @@ export default function CustomerVisitPage() {
                       placeholder="请输入客户名称"
                       value={formData.customerName}
                       onChange={(e) => updateField('customerName', e.target.value)}
+                      required
                     />
                   </div>
                   
@@ -266,6 +310,7 @@ export default function CustomerVisitPage() {
                       placeholder="请输入客户公司"
                       value={formData.customerCompany}
                       onChange={(e) => updateField('customerCompany', e.target.value)}
+                      required
                     />
                   </div>
                 </div>
@@ -280,6 +325,7 @@ export default function CustomerVisitPage() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                       value={formData.visitDate}
                       onChange={(e) => updateField('visitDate', e.target.value)}
+                      required
                     />
                   </div>
                   
@@ -293,6 +339,7 @@ export default function CustomerVisitPage() {
                       placeholder="请输入拜访地点"
                       value={formData.visitLocation}
                       onChange={(e) => updateField('visitLocation', e.target.value)}
+                      required
                     />
                   </div>
                 </div>
@@ -332,12 +379,27 @@ export default function CustomerVisitPage() {
               <CardContent className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
+                    决策人姓名 *
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="请输入决策人姓名"
+                    value={formData.decisionMaker.name || ''}
+                    onChange={(e) => updateNestedField('decisionMaker', 'name', e.target.value)}
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     决策人职位 *
                   </label>
                   <select
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     value={formData.decisionMaker.position}
                     onChange={(e) => updateNestedField('decisionMaker', 'position', e.target.value)}
+                    required
                   >
                     <option value="">请选择决策人职位</option>
                     <option value="总经理/CEO">总经理/CEO</option>
@@ -381,7 +443,7 @@ export default function CustomerVisitPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    负责业务范围
+                    负责业务范围 *
                   </label>
                   <textarea
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -389,24 +451,26 @@ export default function CustomerVisitPage() {
                     rows={3}
                     value={formData.decisionMaker.businessScope}
                     onChange={(e) => updateNestedField('decisionMaker', 'businessScope', e.target.value)}
+                    required
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    关系距离/程度
+                    关系距离/程度 *
                   </label>
                   <select
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    value={formData.decisionMaker.relationshipLevel}
-                    onChange={(e) => updateNestedField('decisionMaker', 'relationshipLevel', e.target.value)}
+                    value={formData.decisionMaker.relationshipDistance}
+                    onChange={(e) => updateNestedField('decisionMaker', 'relationshipDistance', e.target.value)}
+                    required
                   >
                     <option value="">请选择关系程度</option>
+                    <option value="非常熟悉">非常熟悉</option>
+                    <option value="比较熟悉">比较熟悉</option>
+                    <option value="一般熟悉">一般熟悉</option>
+                    <option value="不太熟悉">不太熟悉</option>
                     <option value="初次接触">初次接触</option>
-                    <option value="一般了解">一般了解</option>
-                    <option value="熟悉">熟悉</option>
-                    <option value="深度合作">深度合作</option>
-                    <option value="战略伙伴">战略伙伴</option>
                   </select>
                 </div>
               </CardContent>
