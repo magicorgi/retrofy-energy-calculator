@@ -35,31 +35,18 @@ import Link from 'next/link';
 const mockProducts: Product[] = [
   {
     id: '1',
+    name: 'VLT® Flow Drive FC 111 变频器',
     brand: '丹佛斯',
-    model: 'VLT® Flow Drive FC 111',
-    cooling_capacity: 75, // 适用于75kW系统
-    cop: 0.95, // 变频器效率
-    iplv: 0.96,
-    price_min: 8000,
-    price_max: 15000,
-    price_unit: '元/台',
+    model: 'FC 111',
+    power_range: '0.75-630kW',
+    applicable_industries: ['food_beverage', 'electronics', 'commercial_building'],
     images: ['/images/danfoss-fc111.jpg'],
-    manual_url: 'https://www.danfoss.com/zh-cn/products/drives/ac-drives/vlt-flow-drive-fc-111/',
-    contact_person: '丹佛斯技术支持',
+    contact_region: 'east',
+    contact_person: '张经理',
     contact_phone: '400-890-8986',
     contact_email: 'china.drives@danfoss.com',
     company: '丹佛斯（中国）有限公司',
-    description: '专为风机和泵类应用设计的变频器，具备火灾模式、跳跃频率、皮带监控等功能',
-    features: ['火灾越控模式', '跳跃频率', '皮带监控', '节能优化', 'PID控制'],
-    specifications: {
-      '功率范围': '0.75-630kW',
-      '电源': '380-480V/3Ph',
-      '防护等级': 'IP20/IP55',
-      '效率': '≥95%'
-    },
-    applicable_cities: ['北京', '上海', '广州', '深圳', '天津', '重庆', '杭州', '南京'],
     category: 'frequency_converter',
-    energy_efficiency_grade: '一级',
     created_at: '2024-01-15T00:00:00Z',
     updated_at: '2024-01-15T00:00:00Z',
     status: 'active',
@@ -67,33 +54,18 @@ const mockProducts: Product[] = [
   },
   {
     id: '2',
+    name: 'Performer® HHP 涡旋压缩机',
     brand: '丹佛斯',
-    model: 'Performer® HHP 涡旋压缩机',
-    cooling_capacity: 120, // 制冷量120kW
-    heating_capacity: 140,
-    cop: 4.8,
-    iplv: 5.2,
-    price_min: 25000,
-    price_max: 35000,
-    price_unit: '元/台',
+    model: 'HHP',
+    power_range: '5-240kW',
+    applicable_industries: ['residential', 'commercial_building', 'hospital'],
     images: ['/images/danfoss-performer-hhp.jpg'],
-    manual_url: 'https://www.danfoss.com/zh-cn/products/compressors/scroll-compressors/performer-hhp/',
-    contact_person: '丹佛斯压缩机部',
+    contact_region: 'north',
+    contact_person: '李经理',
     contact_phone: '400-890-8986',
     contact_email: 'china.compressors@danfoss.com',
     company: '丹佛斯（中国）有限公司',
-    description: '适用于住宅和商用热泵的高效涡旋压缩机，即使在-20°C低温下也能可靠运行',
-    features: ['高效涡旋设计', '低温运行', '全新簧片阀', '优化涡旋组', '可靠性高'],
-    specifications: {
-      '功率范围': '5-240kW',
-      '制冷剂': 'R410A/R32/R134a',
-      '工作温度': '-20°C ~ 65°C',
-      '噪音': '≤58dB(A)'
-    },
-    applicable_cities: ['北京', '上海', '广州', '深圳', '成都', '西安', '沈阳', '哈尔滨'],
     category: 'compressor',
-    energy_efficiency_grade: '一级',
-    refrigerant_type: 'R410A',
     created_at: '2024-01-10T00:00:00Z',
     updated_at: '2024-01-10T00:00:00Z',
     status: 'active',
@@ -101,31 +73,18 @@ const mockProducts: Product[] = [
   },
   {
     id: '3',
+    name: 'H系列微板换热器 MPHE',
     brand: '丹佛斯',
-    model: 'H系列微板换热器 MPHE',
-    cooling_capacity: 200, // 换热量200kW
-    cop: 0.98, // 换热效率
-    iplv: 0.99,
-    price_min: 12000,
-    price_max: 20000,
-    price_unit: '元/台',
+    model: 'MPHE',
+    power_range: '50-500kW',
+    applicable_industries: ['commercial_building', 'hospital', 'school'],
     images: ['/images/danfoss-mphe.jpg'],
-    manual_url: 'https://www.danfoss.com/zh-cn/products/heat-exchangers/plate-heat-exchangers/',
-    contact_person: '丹佛斯换热器部',
+    contact_region: 'south',
+    contact_person: '王经理',
     contact_phone: '400-890-8986',
     contact_email: 'china.heatexchangers@danfoss.com',
     company: '丹佛斯（中国）有限公司',
-    description: '用于空气源或地源热泵的高效微板换热器，可作冷凝器或蒸发器使用',
-    features: ['紧凑设计', '高效换热', '耐腐蚀', '易维护', '节能环保'],
-    specifications: {
-      '换热量': '50-500kW',
-      '工作压力': '≤3.0MPa',
-      '工作温度': '-40°C ~ 180°C',
-      '材质': '不锈钢316L'
-    },
-    applicable_cities: ['北京', '上海', '广州', '深圳', '杭州', '南京', '武汉', '长沙'],
     category: 'heat_exchanger',
-    energy_efficiency_grade: '一级',
     created_at: '2024-01-08T00:00:00Z',
     updated_at: '2024-01-08T00:00:00Z',
     status: 'active',
@@ -133,31 +92,18 @@ const mockProducts: Product[] = [
   },
   {
     id: '4',
+    name: 'AB-QM 自力式流量平衡阀',
     brand: '丹佛斯',
-    model: 'AB-QM 自力式流量平衡阀',
-    cooling_capacity: 0, // 阀门类产品
-    cop: 0.99, // 流量控制精度
-    iplv: 0.99,
-    price_min: 2000,
-    price_max: 5000,
-    price_unit: '元/台',
+    model: 'AB-QM',
+    power_range: 'DN15-DN300',
+    applicable_industries: ['commercial_building', 'residential', 'hospital'],
     images: ['/images/danfoss-abqm.jpg'],
-    manual_url: 'https://www.danfoss.com/zh-cn/products/valves/flow-control-valves/',
-    contact_person: '丹佛斯阀门部',
+    contact_region: 'central',
+    contact_person: '刘经理',
     contact_phone: '400-890-8986',
     contact_email: 'china.valves@danfoss.com',
     company: '丹佛斯（中国）有限公司',
-    description: '自力式流量平衡阀，确保系统水力平衡，提高能效和舒适度',
-    features: ['自力式控制', '精确流量', '压差补偿', '免维护', '节能优化'],
-    specifications: {
-      '口径范围': 'DN15-DN300',
-      '工作压力': '≤1.6MPa',
-      '工作温度': '-10°C ~ 120°C',
-      '精度': '±5%'
-    },
-    applicable_cities: ['北京', '上海', '广州', '深圳', '天津', '重庆', '西安', '郑州'],
     category: 'hydraulic_valve',
-    energy_efficiency_grade: '一级',
     created_at: '2024-01-05T00:00:00Z',
     updated_at: '2024-01-05T00:00:00Z',
     status: 'active',
@@ -165,31 +111,18 @@ const mockProducts: Product[] = [
   },
   {
     id: '5',
+    name: 'MBS 3000 压力传感器',
     brand: '丹佛斯',
-    model: 'MBS 3000 压力传感器',
-    cooling_capacity: 0, // 传感器类产品
-    cop: 0.999, // 测量精度
-    iplv: 0.999,
-    price_min: 800,
-    price_max: 2000,
-    price_unit: '元/台',
+    model: 'MBS 3000',
+    power_range: '0-400bar',
+    applicable_industries: ['food_beverage', 'electronics', 'pharmaceutical'],
     images: ['/images/danfoss-mbs3000.jpg'],
-    manual_url: 'https://www.danfoss.com/zh-cn/products/sensors/pressure-sensors/',
-    contact_person: '丹佛斯传感器部',
+    contact_region: 'southwest',
+    contact_person: '陈经理',
     contact_phone: '400-890-8986',
     contact_email: 'china.sensors@danfoss.com',
     company: '丹佛斯（中国）有限公司',
-    description: '高精度压力传感器，适用于暖通空调系统压力监测和控制',
-    features: ['高精度测量', '长期稳定', '抗冲击', '多种输出', 'IO-Link通讯'],
-    specifications: {
-      '测量范围': '0-400bar',
-      '精度': '±0.25% FS',
-      '输出信号': '4-20mA/0-10V',
-      '防护等级': 'IP67'
-    },
-    applicable_cities: ['北京', '上海', '广州', '深圳', '苏州', '无锡', '青岛', '大连'],
     category: 'sensor',
-    energy_efficiency_grade: '一级',
     created_at: '2024-01-03T00:00:00Z',
     updated_at: '2024-01-03T00:00:00Z',
     status: 'active',
@@ -197,31 +130,18 @@ const mockProducts: Product[] = [
   },
   {
     id: '6',
+    name: 'ECL Comfort 310 控制器',
     brand: '丹佛斯',
-    model: 'ECL Comfort 310 控制器',
-    cooling_capacity: 0, // 控制器类产品
-    cop: 0.98, // 控制精度
-    iplv: 0.99,
-    price_min: 5000,
-    price_max: 12000,
-    price_unit: '元/台',
+    model: 'ECL 310',
+    power_range: '1-4个回路',
+    applicable_industries: ['commercial_building', 'residential', 'hospital'],
     images: ['/images/danfoss-ecl310.jpg'],
-    manual_url: 'https://www.danfoss.com/zh-cn/products/controls/heating-controls/',
-    contact_person: '丹佛斯控制部',
+    contact_region: 'northeast',
+    contact_person: '赵经理',
     contact_phone: '400-890-8986',
     contact_email: 'china.controls@danfoss.com',
     company: '丹佛斯（中国）有限公司',
-    description: '智能供热控制器，提供精确的温度和流量控制，优化系统能效',
-    features: ['智能控制', '远程监控', '节能算法', '故障诊断', '数据记录'],
-    specifications: {
-      '控制回路': '1-4个回路',
-      '输入信号': '温度/压力/流量',
-      '输出信号': '0-10V/PWM',
-      '通讯': 'Modbus/BACnet'
-    },
-    applicable_cities: ['北京', '上海', '广州', '深圳', '济南', '石家庄', '太原', '呼和浩特'],
     category: 'control_system',
-    energy_efficiency_grade: '一级',
     created_at: '2024-01-01T00:00:00Z',
     updated_at: '2024-01-01T00:00:00Z',
     status: 'active',
@@ -241,25 +161,56 @@ const categories: { value: ProductCategory; label: string }[] = [
   { value: 'other', label: '其他' }
 ];
 
-const cities = [
-  '北京', '上海', '广州', '深圳', '杭州', '南京', '苏州', '成都',
-  '武汉', '西安', '天津', '重庆', '青岛', '大连', '厦门', '宁波'
+const regions = [
+  { value: 'north', label: '华北' },
+  { value: 'east', label: '华东' },
+  { value: 'south', label: '华南' },
+  { value: 'central', label: '华中' },
+  { value: 'southwest', label: '西南' },
+  { value: 'northeast', label: '东北' },
+  { value: 'northwest', label: '西北' }
+];
+
+const industries = [
+  { value: 'food_beverage', label: '食品饮料' },
+  { value: 'electronics', label: '电子半导体' },
+  { value: 'pharmaceutical', label: '制药生物制品' },
+  { value: 'tobacco', label: '烟草' },
+  { value: 'metallurgy', label: '金属冶炼/金属加工' },
+  { value: 'chemical', label: '化工' },
+  { value: 'automotive', label: '汽车工业' },
+  { value: 'machinery', label: '机械加工' },
+  { value: 'commercial_building', label: '商业建筑' },
+  { value: 'residential', label: '住宅' },
+  { value: 'hospital', label: '医院' },
+  { value: 'school', label: '学校' },
+  { value: 'other', label: '其他' }
 ];
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>(mockProducts);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(mockProducts);
   const [filters, setFilters] = useState<ProductFilter>({});
-  const [sort, setSort] = useState<ProductSort>({ field: 'energy_savings', order: 'desc' });
+  const [sort, setSort] = useState<ProductSort>({ field: 'name', order: 'asc' });
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
   const [showComparison, setShowComparison] = useState(false);
 
-  // 计算节能效果（基于COP）
+  // 计算节能效果（基于产品类别）
   const calculateEnergySavings = (product: Product) => {
-    // 假设基准COP为3.0，计算节能百分比
-    const baselineCOP = 3.0;
-    return ((product.cop - baselineCOP) / baselineCOP * 100);
+    // 根据产品类别返回不同的节能效果
+    const savingsMap = {
+      'frequency_converter': 25,
+      'compressor': 30,
+      'heat_exchanger': 20,
+      'hydraulic_valve': 15,
+      'sensor': 10,
+      'control_system': 18,
+      'expansion_valve': 12,
+      'filter_drier': 8,
+      'other': 5
+    };
+    return savingsMap[product.category] || 5;
   };
 
   // 应用筛选和排序
@@ -269,6 +220,7 @@ export default function ProductsPage() {
     // 搜索筛选
     if (searchTerm) {
       filtered = filtered.filter(product => 
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.company.toLowerCase().includes(searchTerm.toLowerCase())
@@ -276,9 +228,9 @@ export default function ProductsPage() {
     }
 
     // 其他筛选条件
-    if (filters.city) {
+    if (filters.contact_region) {
       filtered = filtered.filter(product => 
-        product.applicable_cities?.includes(filters.city!)
+        product.contact_region === filters.contact_region
       );
     }
 
@@ -290,49 +242,44 @@ export default function ProductsPage() {
       filtered = filtered.filter(product => product.category === filters.category);
     }
 
-    if (filters.cooling_capacity_min) {
-      filtered = filtered.filter(product => product.cooling_capacity >= filters.cooling_capacity_min!);
-    }
-
-    if (filters.cooling_capacity_max) {
-      filtered = filtered.filter(product => product.cooling_capacity <= filters.cooling_capacity_max!);
+    if (filters.applicable_industry) {
+      filtered = filtered.filter(product => 
+        product.applicable_industries.includes(filters.applicable_industry!)
+      );
     }
 
     // 排序
     filtered.sort((a, b) => {
-      let aValue: number;
-      let bValue: number;
+      let aValue: any;
+      let bValue: any;
 
       switch (sort.field) {
-        case 'energy_savings':
-          aValue = calculateEnergySavings(a);
-          bValue = calculateEnergySavings(b);
+        case 'name':
+          aValue = a.name;
+          bValue = b.name;
           break;
-        case 'price':
-          aValue = (a.price_min + a.price_max) / 2;
-          bValue = (b.price_min + b.price_max) / 2;
+        case 'brand':
+          aValue = a.brand;
+          bValue = b.brand;
           break;
-        case 'cop':
-          aValue = a.cop;
-          bValue = b.cop;
-          break;
-        case 'iplv':
-          aValue = a.iplv;
-          bValue = b.iplv;
-          break;
-        case 'cooling_capacity':
-          aValue = a.cooling_capacity;
-          bValue = b.cooling_capacity;
+        case 'power_range':
+          aValue = a.power_range;
+          bValue = b.power_range;
           break;
         case 'created_at':
           aValue = new Date(a.created_at).getTime();
           bValue = new Date(b.created_at).getTime();
           break;
         default:
-          return 0;
+          aValue = a.name;
+          bValue = b.name;
       }
 
-      return sort.order === 'asc' ? aValue - bValue : bValue - aValue;
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sort.order === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      } else {
+        return sort.order === 'asc' ? aValue - bValue : bValue - aValue;
+      }
     });
 
     setFilteredProducts(filtered);
@@ -387,19 +334,19 @@ export default function ProductsPage() {
                   </div>
                 </div>
 
-                {/* 城市筛选 */}
+                {/* 区域筛选 */}
                 <div>
-                  <Label>适用城市</Label>
-                  <Select value={filters.city || 'all'} onValueChange={(value) => 
-                    setFilters(prev => ({ ...prev, city: value === 'all' ? undefined : value }))
+                  <Label>联系区域</Label>
+                  <Select value={filters.contact_region || 'all'} onValueChange={(value) => 
+                    setFilters(prev => ({ ...prev, contact_region: value === 'all' ? undefined : value }))
                   }>
                     <SelectTrigger>
-                      <SelectValue placeholder="选择城市" />
+                      <SelectValue placeholder="选择区域" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="all">全部城市</SelectItem>
-                      {cities.map(city => (
-                        <SelectItem key={city} value={city}>{city}</SelectItem>
+                      <SelectItem value="all">全部区域</SelectItem>
+                      {regions.map(region => (
+                        <SelectItem key={region.value} value={region.value}>{region.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -418,6 +365,24 @@ export default function ProductsPage() {
                       <SelectItem value="all">全部品牌</SelectItem>
                       {brands.map(brand => (
                         <SelectItem key={brand} value={brand}>{brand}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* 适用行业筛选 */}
+                <div>
+                  <Label>适用行业</Label>
+                  <Select value={filters.applicable_industry || 'all'} onValueChange={(value) => 
+                    setFilters(prev => ({ ...prev, applicable_industry: value === 'all' ? undefined : value }))
+                  }>
+                    <SelectTrigger>
+                      <SelectValue placeholder="选择行业" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">全部行业</SelectItem>
+                      {industries.map(industry => (
+                        <SelectItem key={industry.value} value={industry.value}>{industry.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -603,11 +568,36 @@ interface ProductCardProps {
 function ProductCard({ product, energySavings, isSelected, onToggleComparison, canSelect }: ProductCardProps) {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
 
-  const formatPrice = (min: number, max: number, unit: string) => {
-    if (min === max) {
-      return `${min.toLocaleString()} ${unit}`;
-    }
-    return `${min.toLocaleString()} - ${max.toLocaleString()} ${unit}`;
+  const getIndustryLabel = (industry: string) => {
+    const industryMap = {
+      'food_beverage': '食品饮料',
+      'electronics': '电子半导体',
+      'pharmaceutical': '制药生物制品',
+      'tobacco': '烟草',
+      'metallurgy': '金属冶炼/金属加工',
+      'chemical': '化工',
+      'automotive': '汽车工业',
+      'machinery': '机械加工',
+      'commercial_building': '商业建筑',
+      'residential': '住宅',
+      'hospital': '医院',
+      'school': '学校',
+      'other': '其他'
+    };
+    return industryMap[industry as keyof typeof industryMap] || industry;
+  };
+
+  const getRegionLabel = (region: string) => {
+    const regionMap = {
+      'north': '华北',
+      'east': '华东',
+      'south': '华南',
+      'central': '华中',
+      'southwest': '西南',
+      'northeast': '东北',
+      'northwest': '西北'
+    };
+    return regionMap[region as keyof typeof regionMap] || region;
   };
 
   return (
@@ -626,7 +616,8 @@ function ProductCard({ product, energySavings, isSelected, onToggleComparison, c
                   </Badge>
                 )}
               </div>
-              <CardTitle className="text-lg">{product.model}</CardTitle>
+              <CardTitle className="text-lg">{product.name}</CardTitle>
+              <p className="text-sm text-gray-600">{product.model}</p>
             </div>
             <Button
               size="sm"
@@ -651,24 +642,24 @@ function ProductCard({ product, energySavings, isSelected, onToggleComparison, c
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
             <div className="flex items-center gap-2">
               <Thermometer className="w-4 h-4 text-blue-500 flex-shrink-0" />
-              <span className="text-gray-600">制冷量:</span>
-              <span className="font-medium">{product.cooling_capacity} kW</span>
+              <span className="text-gray-600">功率范围:</span>
+              <span className="font-medium">{product.power_range}</span>
             </div>
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-green-500 flex-shrink-0" />
-              <span className="text-gray-600">COP:</span>
-              <span className="font-medium">{product.cop}</span>
+              <span className="text-gray-600">联系区域:</span>
+              <span className="font-medium">{getRegionLabel(product.contact_region)}</span>
             </div>
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-orange-500 flex-shrink-0" />
-              <span className="text-gray-600">IPLV:</span>
-              <span className="font-medium">{product.iplv}</span>
+              <span className="text-gray-600">联系人:</span>
+              <span className="font-medium">{product.contact_person}</span>
             </div>
             <div className="flex items-center gap-2">
               <DollarSign className="w-4 h-4 text-purple-500 flex-shrink-0" />
-              <span className="text-gray-600">价格:</span>
-              <span className="font-medium text-sm">
-                {formatPrice(product.price_min, product.price_max, product.price_unit)}
+              <span className="text-gray-600">公司:</span>
+              <span className="font-medium text-sm truncate">
+                {product.company}
               </span>
             </div>
           </div>
@@ -683,19 +674,19 @@ function ProductCard({ product, energySavings, isSelected, onToggleComparison, c
             </div>
           </div>
 
-          {/* 适用城市 */}
-          {product.applicable_cities && product.applicable_cities.length > 0 && (
+          {/* 适用行业 */}
+          {product.applicable_industries && product.applicable_industries.length > 0 && (
             <div>
-              <span className="text-xs text-gray-600">适用城市: </span>
+              <span className="text-xs text-gray-600">适用行业: </span>
               <div className="flex flex-wrap gap-1 mt-1">
-                {product.applicable_cities.slice(0, 3).map(city => (
-                  <Badge key={city} variant="outline" className="text-xs">
-                    {city}
+                {product.applicable_industries.slice(0, 3).map(industry => (
+                  <Badge key={industry} variant="outline" className="text-xs">
+                    {getIndustryLabel(industry)}
                   </Badge>
                 ))}
-                {product.applicable_cities.length > 3 && (
+                {product.applicable_industries.length > 3 && (
                   <Badge variant="outline" className="text-xs">
-                    +{product.applicable_cities.length - 3}
+                    +{product.applicable_industries.length - 3}
                   </Badge>
                 )}
               </div>
