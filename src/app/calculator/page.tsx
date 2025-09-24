@@ -97,7 +97,7 @@ export default function CalculatorPage() {
         <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">节能改造计算器</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">改造计算器</h1>
         <p className="text-gray-600 max-w-2xl mx-auto">
           专业的建筑节能改造计算工具，帮助您精确评估改造效果，制定最优节能方案
         </p>

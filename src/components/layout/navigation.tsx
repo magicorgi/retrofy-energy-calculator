@@ -32,9 +32,7 @@ export function Navigation() {
   const { isAdmin, switchToAdmin } = useAdmin()
 
   const navItems = [
-    { href: "/calculator", label: "节能计算器", icon: Calculator, public: true },
-    { href: "/demand-collection", label: "改造需求收集", icon: ClipboardList, adminOnly: true },
-    { href: "/customer-visit", label: "客户拜访工具", icon: Users, adminOnly: true },
+    { href: "/calculator", label: "改造计算器", icon: Calculator, public: true },
     { href: "/ecomatch", label: "EcoMatch", icon: Target, superAdminOnly: true },
     { href: "/project-assistant", label: "改造项目助手", icon: Wrench, superAdminOnly: true },
     { href: "/products", label: "产品推荐", icon: Package, public: true },
@@ -43,9 +41,19 @@ export function Navigation() {
     { href: "/feedback", label: "用户反馈", icon: MessageSquare, public: true },
   ]
 
+  const toolItems = [
+    { href: "/demand-collection", label: "需求收集工具", icon: ClipboardList, adminOnly: true },
+    { href: "/customer-visit", label: "客户拜访工具", icon: Users, adminOnly: true },
+  ]
+
   // 过滤导航项目，只显示公开的、管理员可见的或超级管理员可见的
   const visibleNavItems = navItems.filter(item => 
     item.public || (item.adminOnly && isAdmin) || (item.superAdminOnly && isSuperAdmin)
+  )
+
+  // 过滤小工具项目，只显示管理员可见的
+  const visibleToolItems = toolItems.filter(item => 
+    item.adminOnly && isAdmin
   )
 
   return (
@@ -81,6 +89,27 @@ export function Navigation() {
                 )}
               </Link>
             ))}
+            
+            {/* 小工具导航 */}
+            {visibleToolItems.length > 0 && (
+              <div className="flex items-center space-x-1 text-gray-600">
+                <span className="text-sm font-medium">小工具</span>
+                <span className="text-gray-400">|</span>
+                {visibleToolItems.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className="flex items-center space-x-1 hover:text-green-600 transition-colors duration-200 ml-2"
+                  >
+                    <item.icon className="w-4 h-4" />
+                    <span>{item.label}</span>
+                    {item.adminOnly && isAdmin && (
+                      <Badge variant="secondary" className="text-[9px] ml-1">Admin</Badge>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* User Actions */}
@@ -178,6 +207,33 @@ export function Navigation() {
                   )}
                 </Link>
               ))}
+              
+              {/* 移动端小工具导航 */}
+              {visibleToolItems.length > 0 && (
+                <>
+                  <div className="px-3 py-2">
+                    <div className="flex items-center space-x-2">
+                      <div className="h-px bg-gray-200 flex-1"></div>
+                      <span className="text-sm font-medium text-gray-500">小工具</span>
+                      <div className="h-px bg-gray-200 flex-1"></div>
+                    </div>
+                  </div>
+                  {visibleToolItems.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="flex items-center space-x-2 text-gray-600 hover:text-green-600 py-2 px-3 rounded-lg hover:bg-gray-50 ml-4"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <item.icon className="w-4 h-4" />
+                      <span>{item.label}</span>
+                      {item.adminOnly && isAdmin && (
+                        <Badge variant="secondary" className="text-[9px] ml-1">Admin</Badge>
+                      )}
+                    </Link>
+                  ))}
+                </>
+              )}
               <div className="flex flex-col space-y-2 pt-3 border-t border-gray-200">
                 {isAuthenticated ? (
                   <>

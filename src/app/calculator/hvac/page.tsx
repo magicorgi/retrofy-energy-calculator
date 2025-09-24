@@ -269,7 +269,7 @@ export default function HVACCalculatorPage() {
       {/* All 暖通空调 Calculators */}
       <section>
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">所有暖通空调节能改造计算器</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">所有暖通空调改造计算器</h2>
           <p className="text-gray-600">
             涵盖冷热源、输配系统、末端使用等各个环节的专业计算工具
           </p>
