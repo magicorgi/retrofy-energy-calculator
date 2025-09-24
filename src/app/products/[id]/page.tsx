@@ -20,8 +20,10 @@ import {
   Calendar,
   Users,
   Package,
-  Globe
+  Globe,
+  ChevronDown
 } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Product } from '@/types/product';
 import Link from 'next/link';
 
@@ -101,10 +103,17 @@ export default function ProductDetailPage() {
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedRegion, setSelectedRegion] = useState<string>('');
 
   useEffect(() => {
     loadProduct();
   }, [params.id]);
+
+  useEffect(() => {
+    if (product) {
+      setSelectedRegion(product.contact_region);
+    }
+  }, [product]);
 
   const loadProduct = async () => {
     setIsLoading(true);
@@ -156,6 +165,10 @@ export default function ProductDetailPage() {
 
   const getCategoryLabel = (category: string) => {
     return categories.find(c => c.value === category)?.label || category;
+  };
+
+  const getCurrentContactInfo = () => {
+    return regionContacts[selectedRegion as keyof typeof regionContacts] || regionContacts.east;
   };
 
   if (isLoading) {
@@ -248,19 +261,22 @@ export default function ProductDetailPage() {
                       <div className="font-medium">{product.power_range}</div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Globe className="w-4 h-4 text-blue-500" />
-                    <div>
-                      <div className="text-xs text-gray-600">联系区域</div>
-                      <div className="font-medium">{getRegionLabel(product.contact_region)}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-purple-500" />
-                    <div>
-                      <div className="text-xs text-gray-600">联系人</div>
-                      <div className="font-medium">{product.contact_person}</div>
-                    </div>
+                  
+                  {/* 联系区域选择 */}
+                  <div>
+                    <div className="text-xs text-gray-600 mb-2">联系区域</div>
+                    <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="选择联系区域" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {regions.map(region => (
+                          <SelectItem key={region.value} value={region.value}>
+                            {region.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
@@ -291,18 +307,16 @@ export default function ProductDetailPage() {
                   <div className="space-y-1 text-sm">
                     <div className="flex items-center gap-2">
                       <Users className="w-4 h-4 text-gray-400" />
-                      <span>{product.contact_person}</span>
+                      <span>{getCurrentContactInfo().name}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Phone className="w-4 h-4 text-gray-400" />
-                      <span>{product.contact_phone}</span>
+                      <span>{getCurrentContactInfo().phone}</span>
                     </div>
-                    {product.contact_email && (
-                      <div className="flex items-center gap-2">
-                        <Mail className="w-4 h-4 text-gray-400" />
-                        <span>{product.contact_email}</span>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-4 h-4 text-gray-400" />
+                      <span>{getCurrentContactInfo().email}</span>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -459,6 +473,8 @@ export default function ProductDetailPage() {
       {isContactModalOpen && (
         <ContactModal
           product={product}
+          selectedRegion={selectedRegion}
+          contactInfo={getCurrentContactInfo()}
           onClose={() => setIsContactModalOpen(false)}
         />
       )}
@@ -469,10 +485,12 @@ export default function ProductDetailPage() {
 // 联系厂商模态框组件
 interface ContactModalProps {
   product: Product;
+  selectedRegion: string;
+  contactInfo: { name: string; phone: string; email: string };
   onClose: () => void;
 }
 
-function ContactModal({ product, onClose }: ContactModalProps) {
+function ContactModal({ product, selectedRegion, contactInfo, onClose }: ContactModalProps) {
   const [formData, setFormData] = useState({
     company_name: '',
     contact_name: '',
@@ -501,7 +519,7 @@ function ContactModal({ product, onClose }: ContactModalProps) {
             <div className="text-sm text-gray-600 mb-1">产品信息</div>
             <div className="font-medium">{product.name}</div>
             <div className="text-sm text-gray-600">
-              联系人: {product.contact_person} | {product.contact_phone}
+              联系区域: {regions.find(r => r.value === selectedRegion)?.label} | 联系人: {contactInfo.name} | {contactInfo.phone}
             </div>
           </div>
 
