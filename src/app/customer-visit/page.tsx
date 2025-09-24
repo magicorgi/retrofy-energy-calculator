@@ -147,6 +147,37 @@ export default function CustomerVisitPage() {
     }));
   };
 
+  // 计算每个步骤的完成度
+  const getStepCompletionRate = (stepId: number) => {
+    switch (stepId) {
+      case 1: // 客户信息
+        const basicFields = [formData.customerName, formData.customerCompany, formData.visitDate, formData.visitLocation];
+        return Math.round((basicFields.filter(field => field.trim() !== '').length / basicFields.length) * 100);
+      
+      case 2: // 商务关系
+        const businessFields = [formData.decisionMaker.position];
+        return Math.round((businessFields.filter(field => field.trim() !== '').length / businessFields.length) * 100);
+      
+      case 3: // 采购信息
+        const procurementFields = [formData.procurement.procurementMethod];
+        return Math.round((procurementFields.filter(field => field.trim() !== '').length / procurementFields.length) * 100);
+      
+      case 4: // 设备信息
+        const equipmentFields = [formData.equipment.danfossUsage, formData.equipment.competitorUsage, formData.equipment.importantPositions, formData.equipment.importanceReason];
+        return Math.round((equipmentFields.filter(field => field.trim() !== '').length / equipmentFields.length) * 100);
+      
+      case 5: // 供应商信息
+        const supplierFields = [formData.suppliers.maintenanceProvider, formData.suppliers.replacementProvider];
+        return Math.round((supplierFields.filter(field => field.trim() !== '').length / supplierFields.length) * 100);
+      
+      case 6: // 机会信息
+        return 0; // 机会信息都是可选的，完成度始终为0
+      
+      default:
+        return 0;
+    }
+  };
+
   // 检查访问权限
   if (authLoading || adminLoading) {
     return (
@@ -303,13 +334,49 @@ export default function CustomerVisitPage() {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     决策人职位 *
                   </label>
-                  <input
-                    type="text"
+                  <select
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    placeholder="请输入决策人职位"
                     value={formData.decisionMaker.position}
                     onChange={(e) => updateNestedField('decisionMaker', 'position', e.target.value)}
-                  />
+                  >
+                    <option value="">请选择决策人职位</option>
+                    <option value="总经理/CEO">总经理/CEO</option>
+                    <option value="副总经理/副总裁">副总经理/副总裁</option>
+                    <option value="技术总监">技术总监</option>
+                    <option value="运营总监">运营总监</option>
+                    <option value="采购总监">采购总监</option>
+                    <option value="财务总监/CFO">财务总监/CFO</option>
+                    <option value="生产总监">生产总监</option>
+                    <option value="设备总监">设备总监</option>
+                    <option value="工程总监">工程总监</option>
+                    <option value="技术经理">技术经理</option>
+                    <option value="设备经理">设备经理</option>
+                    <option value="工程经理">工程经理</option>
+                    <option value="采购经理">采购经理</option>
+                    <option value="运营经理">运营经理</option>
+                    <option value="生产经理">生产经理</option>
+                    <option value="厂务经理">厂务经理</option>
+                    <option value="厂务设施经理">厂务设施经理</option>
+                    <option value="能源经理">能源经理</option>
+                    <option value="节能经理">节能经理</option>
+                    <option value="环保经理">环保经理</option>
+                    <option value="安全经理">安全经理</option>
+                    <option value="质量经理">质量经理</option>
+                    <option value="维护经理">维护经理</option>
+                    <option value="电气工程师">电气工程师</option>
+                    <option value="机械工程师">机械工程师</option>
+                    <option value="暖通工程师">暖通工程师</option>
+                    <option value="自动化工程师">自动化工程师</option>
+                    <option value="设备工程师">设备工程师</option>
+                    <option value="能源工程师">能源工程师</option>
+                    <option value="环保工程师">环保工程师</option>
+                    <option value="项目经理">项目经理</option>
+                    <option value="技术主管">技术主管</option>
+                    <option value="设备主管">设备主管</option>
+                    <option value="维护主管">维护主管</option>
+                    <option value="采购主管">采购主管</option>
+                    <option value="其他">其他</option>
+                  </select>
                 </div>
 
                 <div>
@@ -755,44 +822,60 @@ export default function CustomerVisitPage() {
 
         {/* 步骤导航 */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center space-x-4">
-              {steps.map((step, index) => (
-                <div key={step.id} className="flex items-center">
-                  <div
-                    className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-colors duration-200 cursor-pointer ${
-                      currentStep === step.id
-                        ? 'bg-green-500 border-green-500 text-white'
-                        : currentStep > step.id
-                        ? 'bg-green-100 border-green-500 text-green-500'
-                        : 'bg-white border-gray-300 text-gray-400'
-                    }`}
-                    onClick={() => setCurrentStep(step.id)}
-                  >
-                    {currentStep > step.id ? (
-                      <CheckCircle className="w-5 h-5" />
-                    ) : (
-                      <span className="text-sm font-semibold">{step.id}</span>
-                    )}
-                  </div>
-                  <div className="ml-3">
-                    <p className={`text-sm font-medium ${
-                      currentStep === step.id ? 'text-green-600' : 'text-gray-500'
-                    }`}>
-                      {step.title}
-                    </p>
-                    <p className="text-xs text-gray-400">{step.description}</p>
-                  </div>
-                  {index < steps.length - 1 && (
-                    <div className="w-8 h-0.5 bg-gray-300 mx-4"></div>
+          {/* 步骤图标 */}
+          <div className="flex justify-center items-center mb-6">
+            {steps.map((step, index) => (
+              <div key={step.id} className="flex items-center">
+                <div
+                  className={`flex items-center justify-center w-12 h-12 rounded-full border-2 transition-colors duration-200 cursor-pointer ${
+                    currentStep === step.id
+                      ? 'bg-green-500 border-green-500 text-white'
+                      : currentStep > step.id
+                      ? 'bg-green-100 border-green-500 text-green-500'
+                      : 'bg-white border-gray-300 text-gray-400'
+                  }`}
+                  onClick={() => setCurrentStep(step.id)}
+                  title={`${step.title} - ${step.description}`}
+                >
+                  {currentStep > step.id ? (
+                    <CheckCircle className="w-6 h-6" />
+                  ) : (
+                    React.createElement(step.icon, { className: "w-6 h-6" })
                   )}
                 </div>
-              ))}
-            </div>
+                {index < steps.length - 1 && (
+                  <div className="w-12 h-0.5 bg-gray-300 mx-2"></div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* 步骤标题和完成度 */}
+          <div className="grid grid-cols-6 gap-4 mb-4">
+            {steps.map((step) => (
+              <div key={step.id} className="text-center">
+                <p className={`text-sm font-medium ${
+                  currentStep === step.id ? 'text-green-600' : 'text-gray-500'
+                }`}>
+                  {step.title}
+                </p>
+                <p className="text-xs text-gray-400 mb-2">{step.description}</p>
+                {/* 完成度指示器 */}
+                <div className="w-full bg-gray-200 rounded-full h-1">
+                  <div 
+                    className="bg-green-500 h-1 rounded-full transition-all duration-300"
+                    style={{ width: `${getStepCompletionRate(step.id)}%` }}
+                  ></div>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  {getStepCompletionRate(step.id)}%
+                </p>
+              </div>
+            ))}
           </div>
           
-          {/* 进度条 */}
-          <Progress value={(currentStep / totalSteps) * 100} className="h-2" />
+          {/* 总体进度条 */}
+          <Progress value={(currentStep / totalSteps) * 100} className="h-3" />
         </div>
 
         {/* 表单内容 */}
