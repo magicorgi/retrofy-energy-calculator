@@ -29,7 +29,6 @@ export default function CustomerVisitPage() {
   const { isAdmin, isLoading: adminLoading } = useAdmin(); 
   const { isAuthenticated, isLoading: authLoading } = useAuth(); 
   const [currentStep, setCurrentStep] = useState(1);
-  const [visitType, setVisitType] = useState<'initial' | 'further'>('initial');
   const [formData, setFormData] = useState({
     // 客户基本信息
     customerName: '',
@@ -89,11 +88,11 @@ export default function CustomerVisitPage() {
   const totalSteps = 6;
 
   const steps = [
-    { id: 1, title: '拜访类型', description: '选择拜访类型', icon: Calendar },
-    { id: 2, title: '客户信息', description: '客户基本信息', icon: Building },
-    { id: 3, title: '商务关系', description: '决策人信息', icon: User },
-    { id: 4, title: '采购信息', description: '采购流程信息', icon: ShoppingCart },
-    { id: 5, title: '设备信息', description: '设备基本信息', icon: Settings },
+    { id: 1, title: '客户信息', description: '客户基本信息', icon: Building },
+    { id: 2, title: '商务关系', description: '决策人信息', icon: User },
+    { id: 3, title: '采购信息', description: '采购流程信息', icon: ShoppingCart },
+    { id: 4, title: '设备信息', description: '设备基本信息', icon: Settings },
+    { id: 5, title: '供应商信息', description: '供应商信息', icon: Briefcase },
     { id: 6, title: '机会信息', description: '机会点搜集', icon: Target }
   ];
 
@@ -193,74 +192,6 @@ export default function CustomerVisitPage() {
   const renderStepContent = () => {
     switch (currentStep) {
       case 1:
-        return (
-          <div className="space-y-8">
-            <div className="text-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">拜访类型选择</h3>
-              <p className="text-gray-600">请选择本次拜访的类型</p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card 
-                className={`cursor-pointer transition-all duration-200 ${
-                  visitType === 'initial' 
-                    ? 'ring-2 ring-green-500 bg-green-50' 
-                    : 'hover:shadow-md'
-                }`}
-                onClick={() => setVisitType('initial')}
-              >
-                <CardContent className="p-6 text-center">
-                  <Calendar className="w-12 h-12 mx-auto mb-4 text-blue-500" />
-                  <h4 className="text-lg font-semibold text-gray-900 mb-2">初期拜访</h4>
-                  <p className="text-sm text-gray-600 mb-4">首次接触客户，了解基本信息</p>
-                  <div className="text-left text-sm text-gray-500">
-                    <p>• 决策人职位</p>
-                    <p>• 采购方式</p>
-                    <p>• 丹佛斯用量</p>
-                    <p>• 友商用量</p>
-                    <p>• 重点工位</p>
-                    <p>• 为什么重要</p>
-                    <p>• 维保供应商</p>
-                    <p>• 改造供应商</p>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card 
-                className={`cursor-pointer transition-all duration-200 ${
-                  visitType === 'further' 
-                    ? 'ring-2 ring-green-500 bg-green-50' 
-                    : 'hover:shadow-md'
-                }`}
-                onClick={() => setVisitType('further')}
-              >
-                <CardContent className="p-6 text-center">
-                  <Users className="w-12 h-12 mx-auto mb-4 text-green-500" />
-                  <h4 className="text-lg font-semibold text-gray-900 mb-2">进一步拜访</h4>
-                  <p className="text-sm text-gray-600 mb-4">深入了解客户需求和机会</p>
-                  <div className="text-left text-sm text-gray-500">
-                    <p>• 负责业务范围</p>
-                    <p>• 关系距离/程度</p>
-                    <p>• 立项时间点</p>
-                    <p>• 预算决策时间点</p>
-                    <p>• 使用环境</p>
-                    <p>• 生命周期信息</p>
-                    <p>• 主要应用方式</p>
-                    <p>• 停机损失</p>
-                    <p>• 目前痛点</p>
-                    <p>• 解决方式</p>
-                    <p>• 改造预算</p>
-                    <p>• 立项项目</p>
-                    <p>• 竞争对手信息</p>
-                    <p>• 明年计划</p>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        );
-
-      case 2:
         return (
           <div className="space-y-8">
             <div className="text-center mb-6">
@@ -364,55 +295,49 @@ export default function CustomerVisitPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                {(visitType === 'initial') && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      决策人职位 *
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                      placeholder="请输入决策人职位"
-                      value={formData.decisionMaker.position}
-                      onChange={(e) => updateNestedField('decisionMaker', 'position', e.target.value)}
-                    />
-                  </div>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    决策人职位 *
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="请输入决策人职位"
+                    value={formData.decisionMaker.position}
+                    onChange={(e) => updateNestedField('decisionMaker', 'position', e.target.value)}
+                  />
+                </div>
 
-                {(visitType === 'further') && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        负责业务范围 *
-                      </label>
-                      <textarea
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="请描述决策人负责的业务范围"
-                        rows={3}
-                        value={formData.decisionMaker.businessScope}
-                        onChange={(e) => updateNestedField('decisionMaker', 'businessScope', e.target.value)}
-                      />
-                    </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    负责业务范围
+                  </label>
+                  <textarea
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="请描述决策人负责的业务范围"
+                    rows={3}
+                    value={formData.decisionMaker.businessScope}
+                    onChange={(e) => updateNestedField('decisionMaker', 'businessScope', e.target.value)}
+                  />
+                </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        关系距离/程度 *
-                      </label>
-                      <select
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        value={formData.decisionMaker.relationshipLevel}
-                        onChange={(e) => updateNestedField('decisionMaker', 'relationshipLevel', e.target.value)}
-                      >
-                        <option value="">请选择关系程度</option>
-                        <option value="初次接触">初次接触</option>
-                        <option value="一般了解">一般了解</option>
-                        <option value="熟悉">熟悉</option>
-                        <option value="深度合作">深度合作</option>
-                        <option value="战略伙伴">战略伙伴</option>
-                      </select>
-                    </div>
-                  </>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    关系距离/程度
+                  </label>
+                  <select
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    value={formData.decisionMaker.relationshipLevel}
+                    onChange={(e) => updateNestedField('decisionMaker', 'relationshipLevel', e.target.value)}
+                  >
+                    <option value="">请选择关系程度</option>
+                    <option value="初次接触">初次接触</option>
+                    <option value="一般了解">一般了解</option>
+                    <option value="熟悉">熟悉</option>
+                    <option value="深度合作">深度合作</option>
+                    <option value="战略伙伴">战略伙伴</option>
+                  </select>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -434,55 +359,49 @@ export default function CustomerVisitPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                {(visitType === 'initial') && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      采购方式 *
-                    </label>
-                    <select
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                      value={formData.procurement.procurementMethod}
-                      onChange={(e) => updateNestedField('procurement', 'procurementMethod', e.target.value)}
-                    >
-                      <option value="">请选择采购方式</option>
-                      <option value="公开招标">公开招标</option>
-                      <option value="邀请招标">邀请招标</option>
-                      <option value="竞争性谈判">竞争性谈判</option>
-                      <option value="单一来源采购">单一来源采购</option>
-                      <option value="询价采购">询价采购</option>
-                      <option value="框架协议">框架协议</option>
-                      <option value="其他">其他</option>
-                    </select>
-                  </div>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    采购方式 *
+                  </label>
+                  <select
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    value={formData.procurement.procurementMethod}
+                    onChange={(e) => updateNestedField('procurement', 'procurementMethod', e.target.value)}
+                  >
+                    <option value="">请选择采购方式</option>
+                    <option value="公开招标">公开招标</option>
+                    <option value="邀请招标">邀请招标</option>
+                    <option value="竞争性谈判">竞争性谈判</option>
+                    <option value="单一来源采购">单一来源采购</option>
+                    <option value="询价采购">询价采购</option>
+                    <option value="框架协议">框架协议</option>
+                    <option value="其他">其他</option>
+                  </select>
+                </div>
 
-                {(visitType === 'further') && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        立项时间点 *
-                      </label>
-                      <input
-                        type="date"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        value={formData.procurement.projectTime}
-                        onChange={(e) => updateNestedField('procurement', 'projectTime', e.target.value)}
-                      />
-                    </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    立项时间点
+                  </label>
+                  <input
+                    type="date"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    value={formData.procurement.projectTime}
+                    onChange={(e) => updateNestedField('procurement', 'projectTime', e.target.value)}
+                  />
+                </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        预算决策时间点 *
-                      </label>
-                      <input
-                        type="date"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        value={formData.procurement.budgetTime}
-                        onChange={(e) => updateNestedField('procurement', 'budgetTime', e.target.value)}
-                      />
-                    </div>
-                  </>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    预算决策时间点
+                  </label>
+                  <input
+                    type="date"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    value={formData.procurement.budgetTime}
+                    onChange={(e) => updateNestedField('procurement', 'budgetTime', e.target.value)}
+                  />
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -505,111 +424,105 @@ export default function CustomerVisitPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                {(visitType === 'initial') && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        丹佛斯用量 *
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="请输入丹佛斯变频器用量"
-                        value={formData.equipment.danfossUsage}
-                        onChange={(e) => updateNestedField('equipment', 'danfossUsage', e.target.value)}
-                      />
-                    </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      丹佛斯用量 *
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                      placeholder="请输入丹佛斯变频器用量"
+                      value={formData.equipment.danfossUsage}
+                      onChange={(e) => updateNestedField('equipment', 'danfossUsage', e.target.value)}
+                    />
+                  </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        友商用量 *
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="请输入友商变频器用量"
-                        value={formData.equipment.competitorUsage}
-                        onChange={(e) => updateNestedField('equipment', 'competitorUsage', e.target.value)}
-                      />
-                    </div>
-                  </>
-                )}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      友商用量 *
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                      placeholder="请输入友商变频器用量"
+                      value={formData.equipment.competitorUsage}
+                      onChange={(e) => updateNestedField('equipment', 'competitorUsage', e.target.value)}
+                    />
+                  </div>
+                </div>
 
-                {(visitType === 'further') && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        使用环境 *
-                      </label>
-                      <select
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        value={formData.equipment.environment}
-                        onChange={(e) => updateNestedField('equipment', 'environment', e.target.value)}
-                      >
-                        <option value="">请选择使用环境</option>
-                        <option value="恶劣">恶劣</option>
-                        <option value="较好">较好</option>
-                      </select>
-                    </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    使用环境
+                  </label>
+                  <select
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    value={formData.equipment.environment}
+                    onChange={(e) => updateNestedField('equipment', 'environment', e.target.value)}
+                  >
+                    <option value="">请选择使用环境</option>
+                    <option value="恶劣">恶劣</option>
+                    <option value="较好">较好</option>
+                  </select>
+                </div>
 
-                    <div className="grid md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          机型 *
-                        </label>
-                        <input
-                          type="text"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                          placeholder="请输入机型"
-                          value={formData.equipment.lifecycle.model}
-                          onChange={(e) => updateDeepNestedField('equipment', 'lifecycle', 'model', e.target.value)}
-                        />
-                      </div>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      机型
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                      placeholder="请输入机型"
+                      value={formData.equipment.lifecycle.model}
+                      onChange={(e) => updateDeepNestedField('equipment', 'lifecycle', 'model', e.target.value)}
+                    />
+                  </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          启机年龄 *
-                        </label>
-                        <input
-                          type="text"
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                          placeholder="如：5年"
-                          value={formData.equipment.lifecycle.age}
-                          onChange={(e) => updateDeepNestedField('equipment', 'lifecycle', 'age', e.target.value)}
-                        />
-                      </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      启机年龄
+                    </label>
+                    <input
+                      type="text"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                      placeholder="如：5年"
+                      value={formData.equipment.lifecycle.age}
+                      onChange={(e) => updateDeepNestedField('equipment', 'lifecycle', 'age', e.target.value)}
+                    />
+                  </div>
 
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          功率 *
-                        </label>
-                        <select
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                          value={formData.equipment.lifecycle.power}
-                          onChange={(e) => updateDeepNestedField('equipment', 'lifecycle', 'power', e.target.value)}
-                        >
-                          <option value="">请选择功率</option>
-                          <option value="大">大</option>
-                          <option value="中">中</option>
-                          <option value="小">小</option>
-                        </select>
-                      </div>
-                    </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      功率
+                    </label>
+                    <select
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                      value={formData.equipment.lifecycle.power}
+                      onChange={(e) => updateDeepNestedField('equipment', 'lifecycle', 'power', e.target.value)}
+                    >
+                      <option value="">请选择功率</option>
+                      <option value="大">大</option>
+                      <option value="中">中</option>
+                      <option value="小">小</option>
+                    </select>
+                  </div>
+                </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        主要应用方式 *
-                      </label>
-                      <textarea
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="请描述变频器的主要应用方式"
-                        rows={3}
-                        value={formData.equipment.applicationMethod}
-                        onChange={(e) => updateNestedField('equipment', 'applicationMethod', e.target.value)}
-                      />
-                    </div>
-                  </>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    主要应用方式
+                  </label>
+                  <textarea
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="请描述变频器的主要应用方式"
+                    rows={3}
+                    value={formData.equipment.applicationMethod}
+                    onChange={(e) => updateNestedField('equipment', 'applicationMethod', e.target.value)}
+                  />
+                </div>
               </CardContent>
             </Card>
 
@@ -622,108 +535,116 @@ export default function CustomerVisitPage() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                {(visitType === 'initial') && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        重点工位有哪些？ *
-                      </label>
-                      <textarea
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="请描述重点工位"
-                        rows={3}
-                        value={formData.equipment.importantPositions}
-                        onChange={(e) => updateNestedField('equipment', 'importantPositions', e.target.value)}
-                      />
-                    </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    重点工位有哪些？ *
+                  </label>
+                  <textarea
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="请描述重点工位"
+                    rows={3}
+                    value={formData.equipment.importantPositions}
+                    onChange={(e) => updateNestedField('equipment', 'importantPositions', e.target.value)}
+                  />
+                </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        为什么重要？ *
-                      </label>
-                      <textarea
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="请说明重点工位的重要性"
-                        rows={3}
-                        value={formData.equipment.importanceReason}
-                        onChange={(e) => updateNestedField('equipment', 'importanceReason', e.target.value)}
-                      />
-                    </div>
-                  </>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    为什么重要？ *
+                  </label>
+                  <textarea
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="请说明重点工位的重要性"
+                    rows={3}
+                    value={formData.equipment.importanceReason}
+                    onChange={(e) => updateNestedField('equipment', 'importanceReason', e.target.value)}
+                  />
+                </div>
 
-                {(visitType === 'further') && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        停机带来的损失 *
-                      </label>
-                      <textarea
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="请描述停机带来的损失"
-                        rows={3}
-                        value={formData.equipment.downtimeLoss}
-                        onChange={(e) => updateNestedField('equipment', 'downtimeLoss', e.target.value)}
-                      />
-                    </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    停机带来的损失
+                  </label>
+                  <textarea
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="请描述停机带来的损失"
+                    rows={3}
+                    value={formData.equipment.downtimeLoss}
+                    onChange={(e) => updateNestedField('equipment', 'downtimeLoss', e.target.value)}
+                  />
+                </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        目前的痛点？ *
-                      </label>
-                      <textarea
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="请描述目前的痛点"
-                        rows={3}
-                        value={formData.equipment.currentPainPoints}
-                        onChange={(e) => updateNestedField('equipment', 'currentPainPoints', e.target.value)}
-                      />
-                    </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    目前的痛点？
+                  </label>
+                  <textarea
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="请描述目前的痛点"
+                    rows={3}
+                    value={formData.equipment.currentPainPoints}
+                    onChange={(e) => updateNestedField('equipment', 'currentPainPoints', e.target.value)}
+                  />
+                </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        目前的解决方式 *
-                      </label>
-                      <textarea
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="请描述目前的解决方式"
-                        rows={3}
-                        value={formData.equipment.currentSolutions}
-                        onChange={(e) => updateNestedField('equipment', 'currentSolutions', e.target.value)}
-                      />
-                    </div>
-                  </>
-                )}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    目前的解决方式
+                  </label>
+                  <textarea
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="请描述目前的解决方式"
+                    rows={3}
+                    value={formData.equipment.currentSolutions}
+                    onChange={(e) => updateNestedField('equipment', 'currentSolutions', e.target.value)}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        );
 
-                {(visitType === 'initial') && (
-                  <>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        目前的维保谁在做？ *
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="请输入维保供应商"
-                        value={formData.suppliers.maintenanceProvider}
-                        onChange={(e) => updateNestedField('suppliers', 'maintenanceProvider', e.target.value)}
-                      />
-                    </div>
+      case 5:
+        return (
+          <div className="space-y-8">
+            <div className="text-center mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">供应商信息</h3>
+              <p className="text-gray-600">目前的供应途径信息</p>
+            </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        目前的替换/改造谁来做？ *
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                        placeholder="请输入改造供应商"
-                        value={formData.suppliers.replacementProvider}
-                        onChange={(e) => updateNestedField('suppliers', 'replacementProvider', e.target.value)}
-                      />
-                    </div>
-                  </>
-                )}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Briefcase className="w-5 h-5" />
+                  目前的供应途径
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    目前的维保谁在做？ *
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="请输入维保供应商"
+                    value={formData.suppliers.maintenanceProvider}
+                    onChange={(e) => updateNestedField('suppliers', 'maintenanceProvider', e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    目前的替换/改造谁来做？ *
+                  </label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="请输入改造供应商"
+                    value={formData.suppliers.replacementProvider}
+                    onChange={(e) => updateNestedField('suppliers', 'replacementProvider', e.target.value)}
+                  />
+                </div>
               </CardContent>
             </Card>
           </div>
