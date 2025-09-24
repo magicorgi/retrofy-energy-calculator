@@ -7,19 +7,22 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { 
   Users, 
-  Building, 
-  ShoppingCart, 
-  Settings, 
   Briefcase, 
-  Target,
+  DollarSign, 
+  Settings, 
+  Target, 
+  Calendar,
   ArrowRight,
   ArrowLeft,
   CheckCircle,
-  User,
-  Calendar,
-  MapPin,
   Lock, 
-  AlertCircle 
+  AlertCircle,
+  MapPin,
+  ClipboardList,
+  Zap,
+  Building,
+  User,
+  ShoppingCart
 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext'; 
 import { useAuth } from '@/contexts/AuthContext'; 
@@ -29,6 +32,7 @@ export default function CustomerVisitPage() {
   const { isAdmin, isLoading: adminLoading } = useAdmin(); 
   const { isAuthenticated, isLoading: authLoading } = useAuth(); 
   const [currentStep, setCurrentStep] = useState(1);
+
   const [formData, setFormData] = useState({
     // 客户基本信息
     customerName: '',
@@ -36,7 +40,7 @@ export default function CustomerVisitPage() {
     visitDate: '',
     visitLocation: '',
     visitPurpose: '',
-    
+
     // 商务关系模块
     decisionMaker: {
       position: '',
@@ -109,8 +113,8 @@ export default function CustomerVisitPage() {
   };
 
   const handleSubmit = () => {
-    console.log('提交客户拜访记录:', formData);
-    alert('客户拜访记录保存成功！');
+    console.log('提交客户拜访表单:', formData);
+    alert('客户拜访记录完成！');
   };
 
   const updateField = (field: string, value: any) => {
@@ -120,35 +124,35 @@ export default function CustomerVisitPage() {
     }));
   };
 
-  const updateNestedField = (section: string, field: string, value: any) => {
+  const updateNestedField = (parentField: string, childField: string, value: any) => {
     setFormData(prev => ({
       ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value
+      [parentField]: {
+        ...prev[parentField],
+        [childField]: value
       }
     }));
   };
 
-  const updateDeepNestedField = (section: string, subsection: string, field: string, value: any) => {
+  const updateDeepNestedField = (parentField: string, childField: string, grandChildField: string, value: any) => {
     setFormData(prev => ({
       ...prev,
-      [section]: {
-        ...prev[section],
-        [subsection]: {
-          ...prev[section][subsection],
-          [field]: value
+      [parentField]: {
+        ...prev[parentField],
+        [childField]: {
+          ...prev[parentField][childField],
+          [grandChildField]: value
         }
       }
     }));
   };
 
-  // 加载状态和权限检查
-  if (adminLoading || authLoading) {
+  // 检查访问权限
+  if (authLoading || adminLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mx-auto mb-4"></div>
           <p className="text-gray-600">加载中...</p>
         </div>
       </div>
@@ -160,12 +164,12 @@ export default function CustomerVisitPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
-            <Lock className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+            <Lock className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-gray-900 mb-2">需要登录</h2>
             <p className="text-gray-600 mb-6">请先登录以访问客户拜访工具</p>
-            <Button asChild>
-              <Link href="/auth/login">立即登录</Link>
-            </Button>
+            <Link href="/auth/login">
+              <Button className="w-full">去登录</Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
@@ -177,12 +181,12 @@ export default function CustomerVisitPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
-            <AlertCircle className="w-16 h-16 mx-auto mb-4 text-red-500" />
+            <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-gray-900 mb-2">访问受限</h2>
             <p className="text-gray-600 mb-6">客户拜访工具仅限管理员使用</p>
-            <Button variant="outline" asChild>
-              <Link href="/">返回首页</Link>
-            </Button>
+            <Link href="/">
+              <Button variant="outline" className="w-full">返回首页</Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
@@ -279,7 +283,7 @@ export default function CustomerVisitPage() {
           </div>
         );
 
-      case 3:
+      case 2:
         return (
           <div className="space-y-8">
             <div className="text-center mb-6">
@@ -343,12 +347,12 @@ export default function CustomerVisitPage() {
           </div>
         );
 
-      case 4:
+      case 3:
         return (
           <div className="space-y-8">
             <div className="text-center mb-6">
               <h3 className="text-xl font-semibold text-gray-900 mb-2">采购信息</h3>
-              <p className="text-gray-600">采购流程相关信息</p>
+              <p className="text-gray-600">采购流程和预算信息</p>
             </div>
 
             <Card>
@@ -407,12 +411,12 @@ export default function CustomerVisitPage() {
           </div>
         );
 
-      case 5:
+      case 4:
         return (
           <div className="space-y-8">
             <div className="text-center mb-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">设备基本信息</h3>
-              <p className="text-gray-600">变频器用量和重要设备信息</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">设备信息</h3>
+              <p className="text-gray-600">变频器和重要设备信息</p>
             </div>
 
             {/* 变频器用量卡片 */}
@@ -668,12 +672,12 @@ export default function CustomerVisitPage() {
               <CardContent className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    今年的改造预算 *
+                    今年的改造预算
                   </label>
                   <input
                     type="text"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    placeholder="请输入今年的改造预算"
+                    placeholder="请输入改造预算金额"
                     value={formData.opportunities.budget}
                     onChange={(e) => updateNestedField('opportunities', 'budget', e.target.value)}
                   />
@@ -681,12 +685,12 @@ export default function CustomerVisitPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    已经立项的项目有哪些？我们是否能够参与？ *
+                    已经立项的项目有哪些？我们是否能够参与？
                   </label>
                   <textarea
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                     placeholder="请描述已立项项目和参与可能性"
-                    rows={4}
+                    rows={3}
                     value={formData.opportunities.projects}
                     onChange={(e) => updateNestedField('opportunities', 'projects', e.target.value)}
                   />
@@ -694,12 +698,25 @@ export default function CustomerVisitPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    目前的参与情况/竞争对手信息 *
+                    目前的参与情况/竞争对手信息
                   </label>
                   <textarea
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    placeholder="请描述参与情况和竞争对手信息"
-                    rows={4}
+                    placeholder="请描述参与情况和竞争对手分析"
+                    rows={3}
+                    value={formData.opportunities.participation}
+                    onChange={(e) => updateNestedField('opportunities', 'participation', e.target.value)}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    竞争对手信息
+                  </label>
+                  <textarea
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="请描述竞争对手情况"
+                    rows={3}
                     value={formData.opportunities.competitors}
                     onChange={(e) => updateNestedField('opportunities', 'competitors', e.target.value)}
                   />
@@ -707,12 +724,12 @@ export default function CustomerVisitPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    明年的计划 *
+                    明年的计划
                   </label>
                   <textarea
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                    placeholder="请描述明年的计划"
-                    rows={4}
+                    placeholder="请描述客户明年的发展规划"
+                    rows={3}
                     value={formData.opportunities.nextYearPlan}
                     onChange={(e) => updateNestedField('opportunities', 'nextYearPlan', e.target.value)}
                   />
@@ -733,50 +750,49 @@ export default function CustomerVisitPage() {
         {/* 页面标题 */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">客户拜访工具</h1>
-          <p className="text-gray-600">专业的客户拜访记录和管理工具</p>
+          <p className="text-gray-600">记录客户拜访中的关键信息</p>
         </div>
 
-        {/* 进度条 */}
+        {/* 步骤导航 */}
         <div className="mb-8">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm text-gray-600">步骤 {currentStep} / {totalSteps}</span>
-            <span className="text-sm text-gray-600">{Math.round((currentStep / totalSteps) * 100)}%</span>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-4">
+              {steps.map((step, index) => (
+                <div key={step.id} className="flex items-center">
+                  <div
+                    className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-colors duration-200 cursor-pointer ${
+                      currentStep === step.id
+                        ? 'bg-green-500 border-green-500 text-white'
+                        : currentStep > step.id
+                        ? 'bg-green-100 border-green-500 text-green-500'
+                        : 'bg-white border-gray-300 text-gray-400'
+                    }`}
+                    onClick={() => setCurrentStep(step.id)}
+                  >
+                    {currentStep > step.id ? (
+                      <CheckCircle className="w-5 h-5" />
+                    ) : (
+                      <span className="text-sm font-semibold">{step.id}</span>
+                    )}
+                  </div>
+                  <div className="ml-3">
+                    <p className={`text-sm font-medium ${
+                      currentStep === step.id ? 'text-green-600' : 'text-gray-500'
+                    }`}>
+                      {step.title}
+                    </p>
+                    <p className="text-xs text-gray-400">{step.description}</p>
+                  </div>
+                  {index < steps.length - 1 && (
+                    <div className="w-8 h-0.5 bg-gray-300 mx-4"></div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
+          
+          {/* 进度条 */}
           <Progress value={(currentStep / totalSteps) * 100} className="h-2" />
-        </div>
-
-        {/* 步骤指示器 */}
-        <div className="flex justify-center mb-8">
-          <div className="flex space-x-4">
-            {steps.map((step, index) => (
-              <div
-                key={step.id}
-                onClick={() => setCurrentStep(step.id)}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg cursor-pointer transition-all duration-200 ${
-                  currentStep === step.id
-                    ? 'bg-green-100 text-green-700 border-2 border-green-300'
-                    : currentStep > step.id
-                    ? 'bg-green-50 text-green-600 hover:bg-green-100'
-                    : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                }`}
-                tabIndex={0}
-                role="button"
-                aria-label={`跳转到步骤 ${step.id}: ${step.title}`}
-              >
-                {currentStep > step.id ? (
-                  <CheckCircle className="w-5 h-5" />
-                ) : (
-                  React.createElement(step.icon, { className: "w-5 h-5" })
-                )}
-                <span className="font-medium">{step.title}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* 提示信息 */}
-        <div className="text-center mb-6">
-          <p className="text-sm text-gray-500">💡 点击下方步骤可快速跳转到对应内容</p>
         </div>
 
         {/* 表单内容 */}
@@ -785,40 +801,34 @@ export default function CustomerVisitPage() {
         </div>
 
         {/* 导航按钮 */}
-        <div className="flex justify-between items-center mt-8 max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto mt-8 flex justify-between">
           <Button
             variant="outline"
             onClick={handlePrevious}
             disabled={currentStep === 1}
-            className="flex items-center space-x-2"
+            className="flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>上一步</span>
+            上一步
           </Button>
 
-          <div className="flex space-x-4">
-            <Button variant="outline" asChild>
-              <Link href="/">取消</Link>
+          {currentStep === totalSteps ? (
+            <Button
+              onClick={handleSubmit}
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+            >
+              <CheckCircle className="w-4 h-4" />
+              完成记录
             </Button>
-            
-            {currentStep === totalSteps ? (
-              <Button
-                onClick={handleSubmit}
-                className="flex items-center space-x-2 bg-green-600 hover:bg-green-700"
-              >
-                <CheckCircle className="w-4 h-4" />
-                <span>保存记录</span>
-              </Button>
-            ) : (
-              <Button
-                onClick={handleNext}
-                className="flex items-center space-x-2"
-              >
-                <span>下一步</span>
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            )}
-          </div>
+          ) : (
+            <Button
+              onClick={handleNext}
+              className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
+            >
+              下一步
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          )}
         </div>
       </div>
     </div>
