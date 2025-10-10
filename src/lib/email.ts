@@ -77,14 +77,14 @@ function generateEmailContent(invitation: EmailInvitation): string {
 <body>
   <div class="container">
     <div class="header">
-      <h1>🎉 欢迎加入 RetroPro 节改专家</h1>
+      <h1>🎉 欢迎加入 RetroPro 改造专家</h1>
       <p>您已被邀请使用我们的节能改造专业工具</p>
     </div>
     
     <div class="content">
       <h2>亲爱的 ${invitation.name}，</h2>
       
-      <p>您好！我们很高兴地通知您，您已被邀请加入 RetroPro 节改专家平台。</p>
+      <p>您好！我们很高兴地通知您，您已被邀请加入 RetroPro 改造专家平台。</p>
       
       <div class="info-box">
         <h3>📋 您的账号信息</h3>
@@ -113,12 +113,12 @@ function generateEmailContent(invitation: EmailInvitation): string {
       
       <p>祝您使用愉快！</p>
       
-      <p><strong>RetroPro 节改专家团队</strong></p>
+      <p><strong>RetroPro 改造专家团队</strong></p>
     </div>
     
     <div class="footer">
       <p>此邮件由系统自动发送，请勿回复。</p>
-      <p>© 2024 RetroPro 节改专家. 保留所有权利。</p>
+      <p>© 2024 RetroPro 改造专家. 保留所有权利。</p>
     </div>
   </div>
 </body>
